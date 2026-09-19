@@ -1,0 +1,94 @@
+[09-20 02:26:09] ==================================================
+[09-20 02:26:09] ChatBox 0.3.4 start
+[09-20 02:26:09] config: ChatBox=1 LogRaw=1 LogText=1 LogUtf8=0
+[09-20 02:26:09] log file: E:\RA2\Mental Omega\MsgLog\2026-09-20_02-26-09.log
+[09-20 02:26:09] --------------------------------------------------
+[09-20 02:26:09] #1 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=6 name="" text="难度： 终结"
+[09-20 02:26:09] draw: lineH=17 (BitFont+0x1C=17)
+[09-20 02:26:09] draw: cfg MaxWidth=0 (0 = auto)
+[09-20 02:26:09] scroll: picked=1 totalAll=1 limit=1 skip=0 rows=[0,1)
+[09-20 02:26:12] #2 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=20 name="" text="这片区域可能是我们南部防线最薄弱的地带。"
+[09-20 02:26:12] #3 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=22 name="" text="拉丁同盟的坦克正在接近这里， 并会发动攻击。"
+[09-20 02:26:12] scroll: picked=3 totalAll=3 limit=3 skip=0 rows=[0,3)
+[09-20 02:26:13] #4 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=27 name="" text="机动化部队已被派到这片区域， 但敌军会更快地赶到这里。"
+[09-20 02:26:13] scroll: picked=4 totalAll=4 limit=4 skip=0 rows=[0,4)
+[09-20 02:26:13] #5 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=27 name="" text="我们的空军已经恢复。 因此， 我们需要从空中进行反击。"
+[09-20 02:26:13] scroll: picked=5 totalAll=5 limit=5 skip=0 rows=[0,5)
+[09-20 02:26:14] #6 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=16 name="" text="任务目标一： 阻挡拉丁同盟的进攻"
+[09-20 02:26:14] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-20 02:26:14] #7 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=24 name="" text="风暴之子战机是世界上最快的战斗机， 我们现在正在"
+[09-20 02:26:14] #8 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=23 name="" text="这种战机上测试非常精确的新型单兵防空激光系统。"
+[09-20 02:26:14] scroll: picked=8 totalAll=8 limit=8 skip=0 rows=[0,8)
+[09-20 02:26:15] scroll: picked=7 totalAll=7 limit=7 skip=0 rows=[0,7)
+[09-20 02:26:15] scroll: picked=5 totalAll=5 limit=5 skip=0 rows=[0,5)
+[09-20 02:26:15] #9 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=27 name="" text="有很多条道路可以穿过山谷， 这对我们的防御构成了问题。"
+[09-20 02:26:15] #10 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=26 name="" text="这些道路之前被逃犯所使用， 而敌人也可能会利用它们。"
+[09-20 02:26:15] scroll: picked=7 totalAll=7 limit=7 skip=0 rows=[0,7)
+[09-20 02:26:16] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-20 02:26:16] scroll: picked=5 totalAll=5 limit=5 skip=0 rows=[0,5)
+[09-20 02:26:16] ui: expanded (click)
+[09-20 02:26:16] scroll: picked=10 totalAll=10 limit=10 skip=0 rows=[0,10)
+[09-20 02:26:16] #11 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=21 name="" text="指挥官， 一个额外的扩展跑道已经准备完毕。"
+[09-20 02:26:16] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-20 02:26:17] #12 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=23 name="" text="警告 - 拉丁同盟已经引爆了一辆自爆吉普车 ！"
+[09-20 02:26:17] scroll: picked=12 totalAll=12 limit=12 skip=0 rows=[0,12)
+[09-20 02:26:23] #13 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=35 name="" text="警告 - 他们过来了 ！ 也许我们真的应该在边界上修一座强化墙的..."
+[09-20 02:26:23] scroll: picked=13 totalAll=13 limit=13 skip=0 rows=[0,13)
+[09-20 02:26:23] #14 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=21 name="" text="指挥官， 又有一个额外的扩展跑道准备好了。"
+[09-20 02:26:23] scroll: picked=14 totalAll=14 limit=14 skip=0 rows=[0,14)
+[09-20 02:26:26] ui: collapsed (click outside)
+[09-20 02:26:27] #15 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=23 name="" text="警告 - 拉丁同盟已经引爆了一辆自爆吉普车 ！"
+[09-20 02:26:27] scroll: picked=1 totalAll=1 limit=1 skip=0 rows=[0,1)
+[09-20 02:26:27] ui: expanded (click)
+[09-20 02:26:27] scroll: picked=15 totalAll=15 limit=15 skip=0 rows=[0,15)
+[09-20 02:26:28] #16 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=16 name="" text="任务目标一： 阻挡拉丁同盟的进攻"
+[09-20 02:26:28] scroll: picked=16 totalAll=16 limit=15 skip=0 rows=[1,16)
+[09-20 02:26:28] scroll: picked=16 totalAll=16 limit=15 skip=1 rows=[0,15)
+[09-20 02:26:29] scroll: picked=16 totalAll=16 limit=15 skip=0 rows=[1,16)
+[09-20 02:26:29] scroll: picked=16 totalAll=16 limit=15 skip=1 rows=[0,15)
+[09-20 02:26:29] #17 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=21 name="" text="指挥官， 我们的坦克正忙于与苏俄进行战斗。"
+[09-20 02:26:29] #18 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=20 name="" text="这些是他们当前可以增援我们的所有坦克了。"
+[09-20 02:26:29] scroll: picked=18 totalAll=18 limit=15 skip=3 rows=[0,15)
+[09-20 02:26:29] scroll: picked=18 totalAll=18 limit=15 skip=0 rows=[3,18)
+[09-20 02:26:29] scroll: picked=18 totalAll=18 limit=15 skip=3 rows=[0,15)
+[09-20 02:26:29] scroll: picked=18 totalAll=18 limit=15 skip=0 rows=[3,18)
+[09-20 02:26:30] scroll: picked=18 totalAll=18 limit=15 skip=3 rows=[0,15)
+[09-20 02:26:30] #19 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=23 name="" text="警告 - 拉丁同盟已经引爆了一辆自爆吉普车 ！"
+[09-20 02:26:30] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:30] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:30] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:31] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:31] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:31] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:31] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:31] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:32] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:32] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:32] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:32] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:33] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:33] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:33] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:33] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:34] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:34] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:34] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:34] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:34] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:35] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:35] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:35] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:36] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:36] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:36] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:37] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:37] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:37] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:37] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:37] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:37] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:38] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:38] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:38] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)
+[09-20 02:26:38] scroll: picked=19 totalAll=19 limit=15 skip=0 rows=[4,19)
+[09-20 02:26:38] scroll: picked=19 totalAll=19 limit=15 skip=4 rows=[0,15)

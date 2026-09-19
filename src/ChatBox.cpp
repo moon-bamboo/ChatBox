@@ -23,7 +23,7 @@
 #include <windows.h>
 #include "offsets.h"
 
-#define CB_VERSION      "0.2.1-window"
+#define CB_VERSION      "0.3.6"
 #define CB_SECTION      "ChatBox"
 
 #define MAX_PATH_LEN    260
@@ -34,11 +34,11 @@
 /* ---------------- 配置 ---------------- */
 
 #define DEF_ENABLE      1
-#define DEF_LOG_RAW     1         /* 阶段 1 的核心开关: 记录全部参数 */
+#define DEF_LOG_RAW     0         /* 默认不记 nameLen/textLen(那是阶段1标定用的) */
 
 typedef struct {
     int Enable;      /* ChatBox=1          总开关 */
-    int LogRaw;      /* LogRaw=1           记录全部 7 个参数 + 返回地址 */
+    int LogRaw;      /* LogRaw=0           1 = 额外记录 nameLen/textLen */
     int LogText;     /* LogText=1          记录消息文本(关掉则只记长度) */
     int LogUtf8;     /* LogUtf8=0          1 = 日志用 UTF-8(带 BOM), 0 = 本地代码页 */
 
@@ -50,8 +50,9 @@ typedef struct {
     int PosX;           /* PosX=8           窗口左上角 X */
     int PosY;           /* PosY=8           窗口左上角 Y */
     int MaxWidth;       /* MaxWidth=0       消息框最大宽度(像素); 0 = 自动 */
-    int ExpandLines;    /* ExpandLines=30   展开态最多显示多少行 */
-    int SysUseMyColor;  /* SysUseMyColor=1  系统消息用当前玩家颜色(0 = 用消息自带颜色) */
+    int ExpandLines;    /* ExpandLines=15   展开态最多显示多少行 */
+    int ScrollStep;     /* ScrollStep=5     翻页/滚轮一次的步长(行) */
+    int SysUseMyColor;  /* SysUseMyColor=0  1 = 系统消息用当前玩家颜色 */
     int FilterSilent;   /* FilterSilent=1   1 = 不进消息框(操作提示: 快捷键/路径点) */
     int ShowLogHint;    /* ShowLogHint=1    1 = 把操作提示照旧用原版样式画出来 */
 } ChatBoxConfig;
@@ -342,8 +343,9 @@ static void LoadConfig(void)
     g_Cfg.PosX         = GetPrivateProfileIntA(CB_SECTION, "PosX",         8,  g_IniPath);
     g_Cfg.PosY         = GetPrivateProfileIntA(CB_SECTION, "PosY",         8,  g_IniPath);
     g_Cfg.MaxWidth     = GetPrivateProfileIntA(CB_SECTION, "MaxWidth",     0,  g_IniPath);
-    g_Cfg.ExpandLines  = GetPrivateProfileIntA(CB_SECTION, "ExpandLines", 30,  g_IniPath);
-    g_Cfg.SysUseMyColor= GetPrivateProfileIntA(CB_SECTION, "SysUseMyColor", 1, g_IniPath);
+    g_Cfg.ExpandLines  = GetPrivateProfileIntA(CB_SECTION, "ExpandLines", 15,  g_IniPath);
+    g_Cfg.ScrollStep   = GetPrivateProfileIntA(CB_SECTION, "ScrollStep",  5,   g_IniPath);
+    g_Cfg.SysUseMyColor= GetPrivateProfileIntA(CB_SECTION, "SysUseMyColor", 0, g_IniPath);
     g_Cfg.FilterSilent = GetPrivateProfileIntA(CB_SECTION, "FilterSilent", 1,  g_IniPath);
     g_Cfg.ShowLogHint  = GetPrivateProfileIntA(CB_SECTION, "ShowLogHint",  0,  g_IniPath);
 
@@ -497,7 +499,14 @@ static TextLine g_LineBuf[MAX_PICKED][MAX_LPP];
 static int      g_LineCnt[MAX_PICKED];
 static int      g_Picked[MAX_PICKED];    /* 本轮要显示的消息下标, [0] = 最新 */
 static int      g_RowBase[MAX_PICKED];   /* 每条消息第一行的行号 */
-static wchar_t  g_Compose[MAX_NAME_W + MAX_TEXT_W + 4];   /* 拼 "名字: 内容" 用 */
+
+/* 拼 "名字: 内容" 用的缓冲。
+ *
+ * ⚠️ 必须是【每条消息一份】, 不能共用一个!
+ * WrapText 存进 g_LineBuf 的是指向本缓冲的【指针】, 所以如果共用一块,
+ * 第二轮拼接就会覆盖第一轮的内容 —— 结果是所有玩家聊天都显示最后一条的文本。
+ * (单机测试没有玩家聊天, 所以这个缺陷一直没暴露。) */
+static wchar_t  g_Compose[MAX_PICKED][MAX_NAME_W + MAX_TEXT_W + 4];
 
 /* 引擎折行函数: __fastcall 表达 this(thiscall), 第 2 个参数是占位 EDX */
 typedef int (__fastcall *TextFitFn)(void* font, void* edxUnused,
@@ -565,6 +574,9 @@ static int WrapText(const wchar_t* text, int width, TextLine* out, int maxOut)
 static int g_Expanded = 0;   /* 0 = 折叠态(只显示最新几行), 1 = 展开态(可翻历史) */
 static int g_Scroll   = 0;   /* 展开态的滚动量: 0 = 看到最新, 越大越往历史翻 */
 
+/* 前向声明: PollKeys 要用, 定义在同组函数的后面 */
+static int ScrollStep(void);
+
 static int KeyDown(int vk)
 {
     return (GetAsyncKeyState(vk) & 0x8000) ? 1 : 0;
@@ -595,7 +607,8 @@ static void PollKeys(void)
         {
             g_Expanded = !g_Expanded;
             g_Scroll   = 0;                 /* 每次切换都回到最新 */
-            LogLine(g_Expanded ? "ui: expanded (Ctrl+M)" : "ui: collapsed (Ctrl+M)");
+            if (g_Cfg.LogRaw)
+                LogLine(g_Expanded ? "ui: expanded (Ctrl+M)" : "ui: collapsed (Ctrl+M)");
         }
         s_pCtrlM = now;
     }
@@ -606,10 +619,10 @@ static void PollKeys(void)
     if (KeyPressedEdge(VK_DOWN, &s_pDown)) { if (g_Scroll > 0) g_Scroll--; }
 
     if (KeyPressedEdge(VK_PRIOR, &s_pPgUp))
-        g_Scroll += g_Cfg.MaxLines;                       /* PageUp: 往历史翻 */
+        g_Scroll += ScrollStep();                         /* PageUp: 往历史翻一屏 */
     if (KeyPressedEdge(VK_NEXT,  &s_pPgDn))
     {
-        g_Scroll -= g_Cfg.MaxLines;
+        g_Scroll -= ScrollStep();
         if (g_Scroll < 0) g_Scroll = 0;
     }
 
@@ -650,11 +663,26 @@ static int MouseInBox(void)
             my >= g_BoxRect.Y && my < g_BoxRect.Y + g_BoxRect.Height);
 }
 
+/* 翻页 / 滚轮一次的步长 = ScrollStep 行(默认 5)。
+ *
+ * 这个值走过两个极端, 最后定在 5:
+ *   · 固定 MaxLines(8) —— 展开态一屏 15 行, 一次翻不到一屏
+ *   · 跟随可见行数(15) —— 一次翻一整屏, 但"瞬间翻页没有中间过程",
+ *     容易让人怀疑自己是不是翻过头了
+ * 5 行的好处是内容能看到连续移动, 又不会翻得太慢。
+ */
+static int ScrollStep(void)
+{
+    int n = g_Cfg.ScrollStep;
+    if (n < 1)  n = 1;
+    if (n > 50) n = 50;
+    return n;
+}
+
 /* 滚轮滚动。dir > 0 = 往历史翻(上), dir < 0 = 往新消息(下) */
 static void ScrollBy(int dir)
 {
-    int lines = g_Cfg.MaxLines;
-    if (lines < 1) lines = 1;
+    int lines = ScrollStep();
 
     if (dir > 0)
     {
@@ -683,13 +711,15 @@ static void PollMouse(void)
         {
             g_Expanded = !g_Expanded;
             g_Scroll   = 0;
-            LogLine(g_Expanded ? "ui: expanded (click)" : "ui: collapsed (click)");
+            if (g_Cfg.LogRaw)
+                LogLine(g_Expanded ? "ui: expanded (click)" : "ui: collapsed (click)");
         }
         else if (g_Expanded)
         {
             g_Expanded = 0;
             g_Scroll   = 0;
-            LogLine("ui: collapsed (click outside)");
+            if (g_Cfg.LogRaw)
+                LogLine("ui: collapsed (click outside)");
         }
     }
     s_pLMB = now;
@@ -831,7 +861,8 @@ static void DrawMessages(void)
     lineH = pFont ? *(int*)(pFont + FONT_OFF_HEIGHT) : 14;
     if (lineH < 6 || lineH > 64) lineH = 14;
 
-    /* 首次绘制时把字体度量记进日志, 方便排查排版问题 */
+    /* 首次绘制时记录字体度量与宽度配置 —— 纯诊断信息, 只在 LogRaw=1 时输出 */
+    if (g_Cfg.LogRaw)
     {
         static int s_metricLogged = 0;
         if (!s_metricLogged)
@@ -850,7 +881,7 @@ static void DrawMessages(void)
         }
     }
 
-    /* 把当前生效的宽度也记一次(排查排版问题用) */
+    if (g_Cfg.LogRaw)
     {
         static int s_widthLogged = 0;
         if (!s_widthLogged)
@@ -925,14 +956,15 @@ static void DrawMessages(void)
 
         if (m->name[0])
         {
-            /* 玩家聊天: 拼成 "名字: 内容" 再折行 */
+            /* 玩家聊天: 拼成 "名字: 内容" 再折行(用本条消息专属的缓冲) */
+            wchar_t* comp = g_Compose[k];
             int p = 0, q = 0;
-            while (m->name[q] && p < MAX_NAME_W + MAX_TEXT_W) { g_Compose[p++] = m->name[q++]; }
-            if (p < MAX_NAME_W + MAX_TEXT_W - 2) { g_Compose[p++] = L':'; g_Compose[p++] = L' '; }
+            while (m->name[q] && p < MAX_NAME_W + MAX_TEXT_W) { comp[p++] = m->name[q++]; }
+            if (p < MAX_NAME_W + MAX_TEXT_W - 2) { comp[p++] = L':'; comp[p++] = L' '; }
             q = 0;
-            while (m->text[q] && p < MAX_NAME_W + MAX_TEXT_W - 1) { g_Compose[p++] = m->text[q++]; }
-            g_Compose[p] = 0;
-            body = g_Compose;
+            while (m->text[q] && p < MAX_NAME_W + MAX_TEXT_W - 1) { comp[p++] = m->text[q++]; }
+            comp[p] = 0;
+            body = comp;
         }
         else
         {
@@ -1003,6 +1035,39 @@ static void DrawMessages(void)
     if (rowBegin < 0) rowBegin = 0;
     if (rowEnd <= rowBegin) return;
     totalRows = rowEnd - rowBegin;
+
+    /* 滚动状态诊断(仅 LogRaw=1, 且只在状态变化时记一行)
+     * 排查"翻页时某行不动"这类问题用: 能看到 rows 区间是否随 skip 正常移动。 */
+    if (g_Cfg.LogRaw)
+    {
+        static int s_pB = -1, s_pE = -1, s_pT = -1, s_pP = -1;
+        if (rowBegin != s_pB || rowEnd != s_pE || totalAll != s_pT || picked != s_pP)
+        {
+            char b1[16], b2[16], b3[16], b4[16], b5[16], b6[16], buf[240];
+            unsigned q = 0;
+            s_pB = rowBegin; s_pE = rowEnd; s_pT = totalAll; s_pP = picked;
+            UtoA((unsigned)picked,   b1);
+            UtoA((unsigned)totalAll, b2);
+            UtoA((unsigned)limit,    b3);
+            UtoA((unsigned)skip,     b4);
+            UtoA((unsigned)rowBegin, b5);
+            UtoA((unsigned)rowEnd,   b6);
+            q = AppendCStr(buf, q, "scroll: picked=", sizeof(buf));
+            q = AppendCStr(buf, q, b1, sizeof(buf));
+            q = AppendCStr(buf, q, " totalAll=", sizeof(buf));
+            q = AppendCStr(buf, q, b2, sizeof(buf));
+            q = AppendCStr(buf, q, " limit=", sizeof(buf));
+            q = AppendCStr(buf, q, b3, sizeof(buf));
+            q = AppendCStr(buf, q, " skip=", sizeof(buf));
+            q = AppendCStr(buf, q, b4, sizeof(buf));
+            q = AppendCStr(buf, q, " rows=[", sizeof(buf));
+            q = AppendCStr(buf, q, b5, sizeof(buf));
+            q = AppendCh(buf, q, ',', sizeof(buf));
+            q = AppendCStr(buf, q, b6, sizeof(buf));
+            q = AppendCh(buf, q, ')', sizeof(buf));
+            LogLine(buf);
+        }
+    }
 
     /* --- ④ 底板(覆盖本轮实际显示的行) --- */
     rect.X = x - 3;
@@ -1075,8 +1140,9 @@ static void DrawMessages(void)
 
         /* 取色规则:
          *   · 玩家聊天(name 非空): 用【发言者】的颜色方案 —— 与原版一致
-         *   · 系统/剧情消息(name 为空): 默认用【当前玩家(我)】的颜色方案,
-         *     让消息框整体呈现"我的界面"观感; SysUseMyColor=0 可关掉改回原样。
+         *   · 系统/剧情消息(name 为空): 默认也用【消息自带的】颜色方案(原版行为);
+         *     SysUseMyColor=1 可改成用【当前玩家(我)】的颜色, 让消息框整体
+         *     呈现"我的界面"观感。
          * 这里只决定"用哪个颜色方案", 具体 RGB 由引擎自己从方案里取 —— 这样才能
          * 和原版表现完全一致(自己算 RGB 会踩到 BaseColor/换算/通道顺序一连串问题)。 */
         if (m->name[0] || !g_Cfg.SysUseMyColor)
@@ -1171,52 +1237,86 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_AddMessageHook(void* regs
 
     g_Seq++;
 
-    /* --- 拼日志行 --- */
-    p = AppendCh(line, p, '#', sizeof(line));
-    p += UtoA(g_Seq, line + p);
-
-    p = AppendCStr(line, p, " ret=",    sizeof(line));
-    p += HtoA(retAddr, line + p);
-
-    p = AppendCStr(line, p, " id=",     sizeof(line));
-    p += UtoA(argID, line + p);
-
-    p = AppendCStr(line, p, " cs=",     sizeof(line));
-    p += UtoA(argColor, line + p);
-
-    p = AppendCStr(line, p, " style=",  sizeof(line));
-    p += HtoA(argStyle, line + p);
-
-    p = AppendCStr(line, p, " to=",     sizeof(line));
-    p += UtoA(argTimeout, line + p);
-
-    p = AppendCStr(line, p, " sp=",     sizeof(line));
-    p += UtoA(argSP, line + p);
-
     nameLen = WcsLenLimited(argName, MAX_TEXT_CHARS);
     textLen = WcsLenLimited(argMsg,  MAX_TEXT_CHARS);
 
-    (void)b1; (void)b2; (void)b3; (void)b4; (void)b5; (void)b6;
+    /* --- 拼日志行 ---
+     *
+     * 两种格式, 由 LogRaw 决定:
+     *
+     *   LogRaw=0 (默认) —— 只给人看的内容:
+     *       #12 moonbamboo: test
+     *       #13 难度： 终结
+     *
+     *   LogRaw=1 —— 完整字段, 排查/标定用:
+     *       #12 ret=0x0055F0FA id=2 cs=7 style=0x4046 to=1259 sp=0
+     *           nameLen=10 textLen=4 name="moonbamboo" text="test"
+     *
+     * ret/id/cs/style/to/sp 这些对日常阅读没有意义(它们是分流的判据、
+     * 颜色方案索引等等), 所以统一收进 LogRaw, 默认不输出。 */
+    p = AppendCh(line, p, '#', sizeof(line));
+    p += UtoA(g_Seq, line + p);
 
     if (g_Cfg.LogRaw)
     {
+        p = AppendCStr(line, p, " ret=",    sizeof(line));
+        p += HtoA(retAddr, line + p);
+
+        p = AppendCStr(line, p, " id=",     sizeof(line));
+        p += UtoA(argID, line + p);
+
+        p = AppendCStr(line, p, " cs=",     sizeof(line));
+        p += UtoA(argColor, line + p);
+
+        p = AppendCStr(line, p, " style=",  sizeof(line));
+        p += HtoA(argStyle, line + p);
+
+        p = AppendCStr(line, p, " to=",     sizeof(line));
+        p += UtoA(argTimeout, line + p);
+
+        p = AppendCStr(line, p, " sp=",     sizeof(line));
+        p += UtoA(argSP, line + p);
+
         p = AppendCStr(line, p, " nameLen=", sizeof(line));
         p += UtoA(nameLen, line + p);
         p = AppendCStr(line, p, " textLen=", sizeof(line));
         p += UtoA(textLen, line + p);
-    }
 
-    if (g_Cfg.LogText)
+        if (g_Cfg.LogText)
+        {
+            WideToLocalEscaped(argName, nbuf, sizeof(nbuf));
+            WideToLocalEscaped(argMsg,  tbuf, sizeof(tbuf));
+
+            p = AppendCStr(line, p, " name=\"",  sizeof(line));
+            p = AppendCStr(line, p, nbuf,        sizeof(line));
+            p = AppendCStr(line, p, "\" text=\"", sizeof(line));
+            p = AppendCStr(line, p, tbuf,        sizeof(line));
+            p = AppendCh(line, p, '"',           sizeof(line));
+        }
+    }
+    else
     {
-        WideToLocalEscaped(argName, nbuf, sizeof(nbuf));
-        WideToLocalEscaped(argMsg,  tbuf, sizeof(tbuf));
+        p = AppendCh(line, p, ' ', sizeof(line));
 
-        p = AppendCStr(line, p, " name=\"",  sizeof(line));
-        p = AppendCStr(line, p, nbuf,        sizeof(line));
-        p = AppendCStr(line, p, "\" text=\"", sizeof(line));
-        p = AppendCStr(line, p, tbuf,        sizeof(line));
-        p = AppendCh(line, p, '"',           sizeof(line));
+        if (g_Cfg.LogText)
+        {
+            /* 玩家聊天带 "名字: " 前缀; 系统消息没有名字, 直接给正文 */
+            if (nameLen > 0)
+            {
+                WideToLocalEscaped(argName, nbuf, sizeof(nbuf));
+                p = AppendCStr(line, p, nbuf,   sizeof(line));
+                p = AppendCStr(line, p, ": ",   sizeof(line));
+            }
+            WideToLocalEscaped(argMsg, tbuf, sizeof(tbuf));
+            p = AppendCStr(line, p, tbuf, sizeof(line));
+        }
+        else
+        {
+            p = AppendCStr(line, p, "(text omitted)", sizeof(line));
+        }
     }
+
+    (void)b1; (void)b2; (void)b3; (void)b4; (void)b5; (void)b6;
 
     /* --- 阶段 2: 存进内存历史 ---
      * FilterSilent=1 时, 操作提示(silent=1) 不进消息框 —— 快捷键提示频率极高,
