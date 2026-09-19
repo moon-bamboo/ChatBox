@@ -1,0 +1,933 @@
+Initialized Ares version: 20.333.289
+Ares requires a CPU with SSE support. Available.
+Set Process Affinity: 65535 (ffff)
+Optimizing list of CD drives for NoCD mode.
+Checking available disk space
+Using GetDiskFreeSpaceEx
+Free disk space is 71193 Mb
+Init Encryption Keys.
+Init_Keys - declarations
+Init_Keys - Load
+Init_Keys - Init fast key
+ EXPANDMO99.MIX EXPANDMO98.MIX EXPANDMO97.MIX EXPANDMO96.MIX EXPANDMO95.MIX EXPANDMO94.MIX EXPANDMO11.MIX EXPANDMO10.MIX CACHE.MIX CACHE.MIX CACHE.MIX LOCAL.MIXMaxLabelLen = 31
+Language: US
+Focus_Restore()
+Focus_Restore(): _MouseCaptured = false
+Focus gained
+Default
+Default
+Prep direct draw.
+Prep direct draw.
+SetDisplayMode: 1920x1080x16
+Checking hardware region fill capability...OK
+Checking overlapped blit capability...OK
+Display mode set
+DSurface::Create_Primary
+DSurface::AllowStretchBlits = true
+DSurface::AllowHWFill = true
+DSurface::Create_Primary - Creating surface
+CreateSurface OK
+DSurface::Create_Primary done
+Allocating new surfaces
+CompositeSurface (1752x1080) VRAM ENABLE_3D
+TileSurface (1752x1080) VRAM ENABLE_3D
+SidebarSurface (168x1080) VRAM
+HiddenSurface (1920x1080) VRAM
+AlternateSurface (1920x1080) VRAM
+Calc_Confining_Rect(0,0,1920,1080)
+Profile: CPU:38 (3687Mhz Pentium III)
+Profile: RAM:10 (2048Mb)
+Profile: VRAM:9 (16Mb)
+Profile: VRAM speed:5 (0 blits per second)
+Overall performance profile = 5
+Main_Game
+Init Game
+Bootstrap.....LOADED NTRLMD.MIXLOADED NEUTRAL.MIX
+event mempool size = 192000
+Default
+Default
+ ...OK
+Init Mouse
+Init CDROM
+Calling Force_CD_Available
+Init Secondary Mixfiles..... CONQMD.MIX CONQUER.MIX CAMEOMD.MIX CAMEO.MIX mapsmo03.mixMULTIMO.MIX     Initializing ThemesMD.MIX
+ THEME.MIX movmo03.mix ...OK
+Init Campaigns
+Init Heaps
+Init Threads
+Reading Game Settings
+--------- Loading SUN.INI settings ---------------
+GameSpeed = 1
+Difficulty = 2
+CampDifficulty = 0
+ScrollMethod = 0
+ScrollRate = 3
+AutoScroll is ON
+DetailLevel = 2
+SideBar on RIGHT
+Sidebar Text is ON
+ActionLines are ON
+ShowHidden is ON
+ToolTips are ON
+Resolution = 1920 X 1080
+StretchMovies is OFF
+AllowHiRes is OFF
+SoundVolume = 0.500000
+VoiceVolume = 0.500000
+ScoreVolume = 0.200000
+ScoreRepeat is ON
+ScoreShuffle is OFF
+Emulated sound card latency default = 9
+--------- Loading Ares global settings -----------
+[Developer error]Unrecognized UI action value: show
+QuickExit is ON
+AllowMultiEngineer is OFF
+CampaignList is ON
+ShowDebugCampaigns is OFF
+Color count is 14
+Mod is Mental Omega (3.3.6) with B1701B29
+--------- Complete -------------------------------
+Init Anim System
+Init Color Remap Tables
+Creating TacticalMap
+Reading SOUNDMD.INI
+Reading EVAMD.INI
+Reading THEMEMD.INI
+Reading MOVIEMD.INI
+Init Bulk Data
+RadarClass::One_Time()
+Set_View_Dimensions(0,0,1752,1048)
+Deleting ZBuffer
+Allocating ZBuffer (1752x1048)
+Deleting ABuffer
+Allocating ABuffer (1752x1048)
+MessageListClass::Init(Width: 1738)
+MessageListClass::Set_Width(1744)
+Set_View_Dimensions(exit)
+Checking available disk space
+Using GetDiskFreeSpaceEx
+Free disk space is 71193 Mb
+Session one time init. UniqueID is 08e60c55
+Init Rules
+Init random number
+Seed is 213583a2
+Init Commands
+Game Init Completed.
+ExceptionReturnStack = 0019D474
+ExceptionReturnAddress = 0048CDA8
+Init random number
+Seed is 213583a2
+WinsockInterface constructed
+WinsockInterface init.
+About to call WSAStartup
+Winsock initialised OK
+Winsock version is 1.1
+Found protocol UDP/IP, max frame size is 65527
+Found protocol UDP/IPv6, max frame size is 65527
+Found protocol afunix, max frame size is 0
+Found protocol UDP/IP, max frame size is 65527
+Found protocol UDP/IP, max frame size is 65527
+Found protocol Vmbus, max frame size is 0
+About to open primary UDP socket
+About to bind the UDP socket to port 0
+Socket option SO_RCVBUF set OK
+Socket option SO_SNDBUF set OK
+Primary UDP Socket init complete
+IPX Manager: RetryDelta = 60
+MaxAhead is 15
+**** IPXManagerClass::Init ***
+About to open primary UDP socket
+About to bind the UDP socket to port 1234
+Socket option SO_RCVBUF set OK
+Socket option SO_SNDBUF set OK
+Primary UDP Socket init complete
+About to query the host name
+About to call gethostbyname
+Found local address: 26.137.95.41
+Found local address: 192.168.164.1
+Found local address: 192.168.26.1
+Found local address: 192.168.101.13
+About to open alternate UDP socket
+About to bind the UDP socket
+Socket option SO_RCVBUF set OK
+Socket option SO_SNDBUF set OK
+Alternate UDP Socket init complete
+FD_WRITE - No OutBuffers left - nothing to do
+FD_WRITE - No AltOutBuffers left - nothing to do
+Processing sides.
+Side 0: GDI 
+  UnitedStates
+  Europeans
+  Pacific
+Side 1: Nod 
+  USSR
+  Latin
+  Chinese
+Side 2: ThirdSide 
+  PsiCorps
+  ScorpionCell
+  Headquaters
+Side 3: FourthSide 
+  Guild1
+  Guild2
+  Guild3
+Side 4: Civilian 
+  Neutral
+Side 5: Mutant 
+  Special
+
+----- Starting scnenario: AROADTRIP.MAP -----
+Player Count: 1
+Reading scenario: AROADTRIP.MAP
+Sound frame size = 43008 bytes
+Sound buffer size = 172032 bytes
+Scen->IsRandom = false
+ loadmd.MIXRead_Scenario_INI - Filename is AROADTRIP.MAP
+Clearing old scenario
+Processing sides.
+Side 0: GDI 
+  UnitedStates
+  Europeans
+  Pacific
+Side 1: Nod 
+  USSR
+  Latin
+  Chinese
+Side 2: ThirdSide 
+  PsiCorps
+  ScorpionCell
+  Headquaters
+Side 3: FourthSide 
+  Guild1
+  Guild2
+  Guild3
+Side 4: Civilian 
+  Neutral
+Side 5: Mutant 
+  Special
+Map.Init_Clear()
+MapClass::Init_Clear entry
+MapClass::Init_Clear done
+RadarClass::Init_Clear
+RadarClass::Init_Clear done
+Logic.Init()
+CurrentObjects.Clear()
+Scen->Clear_All_Waypoints()
+Init_Campaigns()
+Processing sides.
+Side 0: GDI 
+Side 1: Nod 
+Side 2: ThirdSide 
+Side 3: FourthSide 
+Side 4: Civilian 
+Side 5: Mutant 
+Converting 0 nodes.
+Init theater DESERT
+Processing sides.
+Side 0: GDI 
+  UnitedStates
+  Europeans
+  Pacific
+Side 1: Nod 
+  USSR
+  Latin
+  Chinese
+Side 2: ThirdSide 
+  PsiCorps
+  ScorpionCell
+  Headquaters
+Side 3: FourthSide 
+  Guild1
+  Guild2
+  Guild3
+Side 4: Civilian 
+  Neutral
+Side 5: Mutant 
+  Special
+Processing sides.
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+[Developer notice]Counter attempted to overflow (given count of 1156 exceeds maximum allowed count of 512).
+Preparing Mixfiles for Side 00.
+     Initilizing SIDEC01MD.MIX
+     Initilizing SIDEC01.MIX
+     Initilizing SIDENC01.MIX
+RadarClass::Init_For_House()
+Preparing Mixfiles for Side 00.
+     Releasing SIDEC01.MIX
+     Releasing SIDEC01MD.MIX
+     Releasing SIDENC01.MIX
+     Initilizing SIDEC01MD.MIX
+     Initilizing SIDEC01.MIX
+     Initilizing SIDENC01.MIX
+RadarClass::Init_For_House()
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A59D0A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F0980!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FFA60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F0B60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B7800!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F0F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F19E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D31E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A88C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B90F0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A80C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A9B40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A9960!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A9680!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A94A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A90B0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AAE20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AAC40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AA760!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AA060!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5ABE20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5ABA00!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AB820!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AB400!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A93C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5ACF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AAA60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AA880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AC910!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AC730!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AC550!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AC370!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5ADF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5ACC40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AD450!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AD270!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AD090!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AEE20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AEC40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AEA60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5ADA00!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AFAE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AF900!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AF720!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AD5B0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5F6880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AF1B0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A59EF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B9010!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B0A80!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B08A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BC020!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B1BE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B0E20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B1630!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B1010!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B2BE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B2750!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B2570!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B1A00!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BDA80!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B1820!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5DE280!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A3660!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B3950!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B3B30!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B3570!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E42E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B4F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5ED360!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B3F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B3C40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B4A60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B4880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B4460!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B5F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B5810!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B52F0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B5110!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B6F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B4D40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D8360!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B6B40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D8720!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B6780!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B65A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B63C0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5DAE20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B7F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B6E40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B6960!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BE680!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C0040!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5C2D20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B8480!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B82A0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5DAA60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B9820!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5C2420!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5C3C40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BA9D0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BA7F0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BA610!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BA430!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BA070!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BBBE0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5DA880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BBA00!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BB5E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BACE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BCF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BCD40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BC980!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BC7A0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5DAC40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BC4C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BC2E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BC100!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BB400!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BD6C0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5F04C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BD8A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BD2A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BD0C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BEC20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BEA40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BE860!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5F8820!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BE0D0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BDD20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BFF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BFB00!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BF060!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C09A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C05E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C0400!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C0220!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C6680!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C1A30!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C64A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C10F0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C1010!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FFA60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C2600!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F06A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C2240!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5C6E20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B61E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C1D20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C3E20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C3780!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C30E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C32C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C4E20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C4C40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C4A60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C4880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C46A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C4280!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A7470!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C5700!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5C35A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C5420!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C5240!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C5060!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C6C40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C6A60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C5CE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C6080!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C7E20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C7C40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C7A60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C7880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C73C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B60CB20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B5900!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B9200!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C2060!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5C9BE0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E5520!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E8140!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5C9340!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5C9160!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A59FCE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B3390!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B60CA40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5CA320!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5CA140!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5CBCE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5CCC20!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5CD3A0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5CD1C0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5CEF20!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5CED40!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5CE820!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5CE640!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5CE460!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5CE280!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5CFF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5CFC40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5D0020!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5D1D20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5D1B40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5D1120!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5ED740!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D2BE0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D27C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C3A60!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D3310!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D3130!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D49A0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D45E0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D3930!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D40C0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D5E20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D5A60!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D5640!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D5460!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D5280!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D50A0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A587060!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D6D20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D6A40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5B9A00!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D6760!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D6480!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D62A0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5C71E0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D7F20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D7D40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5CF820!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D7A60!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D7880!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5CF640!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D72A0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D70C0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5CF020!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D8E20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D8C40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D8200!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D8020!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F4020!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5E2320!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DAF20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DAD40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DAB60!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F6D40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DA880!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DA6A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D8180!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DBC20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DBA40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DB860!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DB680!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DB4A0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DB080!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DC9E0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DC600!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5C07C0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DC220!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D8720!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DDF20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5B9BE0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DD900!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DD720!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5B8CE0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D9180!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DD120!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5DE8A0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DE080!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5B80C0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DF8E0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DF520!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DF340!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5DF160!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5D3F20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E0F20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A59BB00!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A59A570!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E0960!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E0780!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E05A0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E03C0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E01E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E1CE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E1480!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E2E20!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E2C40!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E2960!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E2780!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E25A0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E23C0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E21E0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E3F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E3D40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E3B60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E3880!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D47C0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E3280!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E47A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E45C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5B2150!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E4100!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E4020!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F65A0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E5D20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E52F0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E5110!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E6F20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E6C40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E6A60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F8760!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5F8580!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F80A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F9220!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A580F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E6360!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5F6A60!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E7E20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E7C40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E7A60!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E7880!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E76A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E8E20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A581340!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5AA240!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5BCB60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E6880!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A59A1B0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DF700!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E87E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E8500!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E8320!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E9F20!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E9D40!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E9B60!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5E9740!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EB4B0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EB2D0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5ECCE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5ECB00!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EC920!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EC740!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EC560!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EC280!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EC0A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EDE20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F0D40!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5EEF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EEB00!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EE920!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EE740!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5EE560!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5C9A00!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5F3640!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5F3460!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E0C40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F5840!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5F2E20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F5320!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F5140!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5D5C40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F6F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FE780!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5E5B40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F63C0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F61E0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F7F20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F7D40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F7B60!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F5A20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F7980!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F77A0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A595BE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5F8460!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5F8280!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5A5740!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5F8640!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A5DD300!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FB520!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5E36A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FCC20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FC940!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FC760!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FC580!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FC3A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FC1C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FDF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FDD40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FDB60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FD980!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FD7A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FD5C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FD2E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FD100!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FD020!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FED20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FEB40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FE960!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FE5A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FE3C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FE1E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FFF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FFD40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5A83A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FF780!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FF4A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5FF1C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5F3BE0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D0F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D0D40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D0B60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D0880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D0460!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D0280!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D1E20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D1C40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D1A60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D1880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D16A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D13C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D11E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D2F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D2D40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D2B60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D2880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D26A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D23C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D21E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D3F20!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5C9720!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5A0010!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2A5CAE20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5864B0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D9F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D9D40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D9B60!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5E2700!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5D9680!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5D94A0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5D92C0!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5D90E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DA3A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DA1C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DBF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DBD40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DBB60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DB980!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DB7A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DB5C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DB3E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DB200!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DB020!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DCE20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DCC40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DCA60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DC880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DC6A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DC4C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DC2E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DC100!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DC020!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DDD20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DDB40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DD960!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DD780!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DD5A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DD3C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DD1E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DEF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DED40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DEB60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DE980!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DE7A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DE5C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DE2E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DE100!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DE020!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DFD20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DFB40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DF960!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DF780!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DF5A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DF3C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5DF1E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E0E20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E0C40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E0A60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E0580!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E1E20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E2BE0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A586090!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5D4E20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5E3F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E3D40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E3660!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E4520!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E4240!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E5F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E5C40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E5960!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E5780!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E55A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E53C0!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5E6E20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5E6A40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5E6860!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5E50E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E6480!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E8B40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E8660!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E9F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E9840!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E9020!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EAC20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EAA40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EA860!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EA680!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EA3A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EA1C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EBF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EBD40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EBB60!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5EB780!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EB2C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EC3A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EC1C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EDF20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5ED940!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2A595500!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5ED460!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5ED280!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5ED0A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EEE20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EEC40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EEA60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EE880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EE5A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EE3C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EE1E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C1610!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EFE20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F3B60!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EF720!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EF540!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EF360!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EF180!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F1600!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F1020!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F4020!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F2A40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F2560!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F2380!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5D33C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B60C880!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F3980!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FAD20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F3F20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5EF900!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5F3D40!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5F3020!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5F7160!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5F8D20!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5F8940!
+[Developer fatal]Pointer 0000000F declared change to both 2B5FF780 AND 2B5FA940!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FA660!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FA480!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2A5C75A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FA2A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FB420!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FB140!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5E62A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FCD20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FCB40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B60C7A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FC360!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FD420!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5FEE20!
+[Developer fatal]Pointer 0000000A declared change to both 2B5EB4A0 AND 2B5FEC40!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FE860!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FE680!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FE4A0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FE2C0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FE0E0!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FFE20!
+[Developer fatal]Pointer 00000000 declared change to both 2A5A8CE0 AND 2B5FFC40!
+MapClass::Init_Clear entry
+MapClass::Init_Clear done
+RadarClass::Init_Clear
+RadarClass::Init_Clear done
+Loaded 214 isometric tiles consuming 1116 Kb
+Converting 0 nodes.
+[Developer warning]The [BuildingTypes] list contains more than 512 entries. This might result in unexpected behaviour and crashes.
+MessageListClass::Init(Width: 1738)
+     Releasing NEUTRAL.MIX
+     Releasing NTRLMD.MIX
+SoundVolume = 0.500000
+VoiceVolume = 0.500000
+ScoreVolume = 0.200000
+ScoreRepeat is ON
+ScoreShuffle is OFF
+Theme::QueueSong(5)
+Entering Create_Connections
+IPX Manager: RetryDelta = 60
+MaxAhead is 24
+Tooltips are on.
+Capture_Mouse()
+
+SAVING GAME [AROADTRIP.sav - [About to save the game
+Scenario Save: ElapsedTimer = 34822425
+Saving global Ares data
+Finished saving the game
+SAVING GAME [Saved Games\AROADTRIP.sav] - Complete
+
+Sound frame size = 11264 bytes
+Sound buffer size = 45056 bytes
+Default
+Default
+Radar: TacticalMap availability is on
+Radar: ACTIVATING
+Sound frame size = 11264 bytes
+Sound buffer size = 45056 bytes
+Sound frame size = 11264 bytes
+Sound buffer size = 45056 bytes
+Sound frame size = 11264 bytes
+Sound buffer size = 45056 bytes
+Sound frame size = 11264 bytes
+Sound buffer size = 45056 bytes
+Release_Mouse()
+Exception handler fired!
+Exception C0000005 at 004BB83D

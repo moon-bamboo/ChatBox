@@ -1,0 +1,14 @@
+[09-19 23:35:08] ==================================================
+[09-19 23:35:08] ChatBox 0.2.1-window start (phase 1: capture only)
+[09-19 23:35:08] config: ChatBox=1 LogRaw=1 LogText=1 LogUtf8=0
+[09-19 23:35:08] log file: E:\RA2\Mental Omega\MsgLog\2026-09-19_23-35-08.log
+[09-19 23:35:08] --------------------------------------------------
+[09-19 23:35:08] #1 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=6 name="" text="难度： 终结"
+[09-19 23:35:08] draw: lineH=17 (BitFont+0x1C=17)
+[09-19 23:35:11] #2 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=20 name="" text="这片区域可能是我们南部防线最薄弱的地带。"
+[09-19 23:35:11] #3 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=22 name="" text="拉丁同盟的坦克正在接近这里， 并会发动攻击。"
+[09-19 23:35:15] #4 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=27 name="" text="机动化部队已被派到这片区域， 但敌军会更快地赶到这里。"
+[09-19 23:35:18] #5 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=27 name="" text="我们的空军已经恢复。 因此， 我们需要从空中进行反击。"
+[09-19 23:35:26] #6 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=16 name="" text="任务目标一： 阻挡拉丁同盟的进攻"
+[09-19 23:35:30] #7 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=24 name="" text="风暴之子战机是世界上最快的战斗机， 我们现在正在"
+[09-19 23:35:30] #8 ret=0x006DE127 id=0 cs=28 style=0x00004046 to=1259 sp=0 nameLen=0 textLen=23 name="" text="这种战机上测试非常精确的新型单兵防空激光系统。"
