@@ -1,0 +1,21 @@
+# 构建中间产物
+src/*.o
+src/*.exe
+src/*.a
+_build/
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+
+# 运行期日志（插件在游戏目录生成的）
+# 注意: 仓库里 logs/ 下已归档的实测日志是刻意保留的，不要排除它们
+MsgLog/
+AutoKit.log
+ChatBox.log
+
+# 编译暂存（build.bat 在 %TEMP% 下工作，一般不会出现在这里）
+*.stackdump
