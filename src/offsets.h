@@ -61,26 +61,38 @@ typedef struct { unsigned char R, G, B; } ColorStruct;
 /* 游戏主循环每逻辑帧入口 (AutoKit 同址; 将来画窗口/处理输入用) */
 #define ADDR_FRAME_HOOK             0x0055D360u
 
-/* 绘制接管 —— 钩在【调用点】而不是被调函数里 (objdump 实测):
+/* 绘制接管 —— 钩在 MessageListClass::Draw **内部**"画消息列表"的那三条指令上。
  *
- *   4f4558: b9 60 bc a8 00   mov  $0xa8bc60,%ecx     ; MessageListClass::Instance
- *   4f455d: e8 3e 04 0e 00   call 0x5d49a0          ; ← 钩这里, 正好 5 字节
- *   4f4562: 8b 0d 68 73 88 00                        ; 返回后继续
+ * ⚠️ 曾经钩在 0x4F455D（原版 call MessageListClass::Draw 的调用点）并整个跳过,
+ *    结果【输入框也没了】(联机实测反馈: 按回车看不到"从【玩家名】：")。
+ *    因为 Draw 同时画两样东西:
  *
- * 为什么钩调用点而不是 MessageListClass::Draw(0x5D49A0) 本身:
- *   1. Draw 的入口是 sub $0x24,%esp / push %esi / mov %ecx,%esi, 要"跳过整个
- *      函数"就得手工补栈清理, 容易出错;
- *   2. 钩调用点只需 return 0x4F4562 即可干净跳过, 无需碰栈。
+ *    5d49a0: ...
+ *    5d49b4:  mov 0x19(%esi),%al   ; IsEdit (MessageListClass+0x19)
+ *    5d49b9:  je  0x5d4a8d         ; IsEdit==0 -> 跳过【输入框】部分
+ *    5d49bf:  ...                  ; 画输入框 (EditLabel @ this+0x24)
+ *    5d4a8d:  mov (%esi),%ecx      ; ecx = this->MessageList (this+0x00)
+ *    5d4a90:  test %ecx,%ecx
+ *    5d4a92:  je  0x5d4a9b         ; 链表空则跳过
+ *    5d4a94:  mov (%ecx),%edx      ; ★ 这里才画【消息列表】
+ *    5d4a96:  push $0x1
+ *    5d4a98:  call *0x2c(%edx)     ; MessageList->Draw(1)
+ *    5d4a9b:  add $0x24,%esp
+ *    5d4a9e:  ret
  *
- * 这样做的最大好处: 原版流程【一点都不动】——
- *   AddMessage 照常执行, 所以消息照常进链表、照常超时消失、提示音照常播放,
- *   我们只是不让它画出来。
- *   (Phobos 的做法是让消息根本不进原版链表, 代价是得自己补提示音。)
- */
+ * 所以改钩 0x5D4A94: 覆盖 mov/push/call 共 7 字节(边界整齐), 返回 0x5D4A9B
+ * 只跳过"画消息列表", 输入框仍由原版绘制。
+ *
+ * 跳转安全性: 0x5D4A8F 的 pop %esi 在钩点【之前】已执行, 栈已平衡;
+ * 0x5D4A9B 的 add $0x24,%esp 正是原版的栈清理, 跳过去正好。 */
+#define ADDR_MSGLIST_DRAW_HOOK      0x005D4A94u
+#define ADDR_AFTER_MSGLIST_DRAW     0x005D4A9Bu
+#define HOOK_SIZE_MSGLIST_DRAW      7
+
+/* 原版调用 MessageListClass::Draw 的调用点(备查 —— 不再在此挂钩) */
 #define ADDR_DRAW_CALL_SITE         0x004F455Du
 #define ADDR_AFTER_DRAW_CALL        0x004F4562u
-#define HOOK_SIZE_DRAW_CALL         5
-#define ADDR_MESSAGELIST_DRAW       0x005D49A0u   /* 被跳过的函数本身(备查) */
+#define ADDR_MESSAGELIST_DRAW       0x005D49A0u
 
 /* 绘制接管点: GScreenClass::NewMessageListDraw (Phobos 同址)
  * 实测指令: A1 1C 73 88 00   mov 0x88731c,%eax   (5 字节)

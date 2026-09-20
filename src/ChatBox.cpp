@@ -23,7 +23,7 @@
 #include <windows.h>
 #include "offsets.h"
 
-#define CB_VERSION      "0.3.6"
+#define CB_VERSION      "0.3.8"
 #define CB_SECTION      "ChatBox"
 
 #define MAX_PATH_LEN    260
@@ -49,6 +49,7 @@ typedef struct {
     int BoardOpacity;   /* BoardOpacity=45  底板不透明度 0~100 */
     int PosX;           /* PosX=8           窗口左上角 X */
     int PosY;           /* PosY=8           窗口左上角 Y */
+    int TopGapLines;    /* TopGapLines=1    顶部预留几行空档(给回车输入框让位) */
     int MaxWidth;       /* MaxWidth=0       消息框最大宽度(像素); 0 = 自动 */
     int ExpandLines;    /* ExpandLines=15   展开态最多显示多少行 */
     int ScrollStep;     /* ScrollStep=5     翻页/滚轮一次的步长(行) */
@@ -342,6 +343,7 @@ static void LoadConfig(void)
     g_Cfg.BoardOpacity = GetPrivateProfileIntA(CB_SECTION, "BoardOpacity", 45, g_IniPath);
     g_Cfg.PosX         = GetPrivateProfileIntA(CB_SECTION, "PosX",         8,  g_IniPath);
     g_Cfg.PosY         = GetPrivateProfileIntA(CB_SECTION, "PosY",         8,  g_IniPath);
+    g_Cfg.TopGapLines  = GetPrivateProfileIntA(CB_SECTION, "TopGapLines",  1,  g_IniPath);
     g_Cfg.MaxWidth     = GetPrivateProfileIntA(CB_SECTION, "MaxWidth",     0,  g_IniPath);
     g_Cfg.ExpandLines  = GetPrivateProfileIntA(CB_SECTION, "ExpandLines", 15,  g_IniPath);
     g_Cfg.ScrollStep   = GetPrivateProfileIntA(CB_SECTION, "ScrollStep",  5,   g_IniPath);
@@ -363,6 +365,8 @@ static void LoadConfig(void)
     if (g_Cfg.BoardOpacity < 0)   g_Cfg.BoardOpacity = 0;
     if (g_Cfg.BoardOpacity > 100) g_Cfg.BoardOpacity = 100;
     if (g_Cfg.MaxWidth < 0)       g_Cfg.MaxWidth     = 0;
+    if (g_Cfg.TopGapLines < 0)    g_Cfg.TopGapLines  = 0;
+    if (g_Cfg.TopGapLines > 10)   g_Cfg.TopGapLines  = 10;
     if (g_Cfg.ExpandLines < 2)    g_Cfg.ExpandLines  = 2;
     if (g_Cfg.ExpandLines > 200)  g_Cfg.ExpandLines  = 200;
 }
@@ -916,7 +920,10 @@ static void DrawMessages(void)
     if (picked <= 0) return;
 
     x = g_Cfg.PosX;
-    y = g_Cfg.PosY;
+    /* 顶部按行预留空档: 原版按回车时会在屏幕顶部显示"从【玩家名】："输入框,
+     * 并把消息列表下推。消息框也相应下移, 免得盖住输入框。
+     * 用"行数"而不是像素, 是因为用户不需要知道字高是多少。 */
+    y = g_Cfg.PosY + g_Cfg.TopGapLines * lineH;
     /* 消息框宽度: MaxWidth>0 时直接用它, 否则取屏幕宽度的一半(上限 520)。
      * 夹紧规则: 至少 80 像素, 且不超出屏幕右侧。 */
     maxW = 420;
@@ -1176,10 +1183,13 @@ static void DrawMessages(void)
     }
 }
 
-/* 绘制接管: 钩在 0x4F455D (原版 call MessageListClass::Draw 的位置)
+/* 绘制接管: 钩在 MessageListClass::Draw **内部**"画消息列表"的指令上 (0x5D4A94)
  *
- * 返回 0x4F4562 = 跳过那条 call, 自己画; 返回 0 = 执行原 call, 走原版。
- * 无论哪条路, AddMessage 都照常跑过 —— 消息该进链表进链表、该响提示音响提示音。
+ * 返回 0x5D4A9B = 只跳过"画消息列表", 同一个函数里的【输入框】照旧由原版绘制;
+ * 返回 0 = 执行原指令, 原版消息列表也照旧显示。
+ *
+ * ⚠️ 曾经钩在更外层的调用点(0x4F455D)并整个跳掉 Draw, 结果联机按回车时
+ *    看不到"从【玩家名】："输入框 —— 因为 Draw 同时负责画输入框和消息列表。
  */
 extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_MessageDrawHook(void* regs)
 {
@@ -1189,9 +1199,9 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_MessageDrawHook(void* reg
     if (g_Cfg.Enable && g_Cfg.ShowWindow)
     {
         DrawMessages();
-        return ADDR_AFTER_DRAW_CALL;   /* 跳过原版 MessageListClass::Draw */
+        return ADDR_AFTER_MSGLIST_DRAW;   /* 只跳过消息列表, 保留输入框 */
     }
-    return 0;                          /* 执行原指令, 原版照旧显示 */
+    return 0;                             /* 执行原指令, 原版照旧显示 */
 }
 
 /* ==================== 核心: AddMessage 钩子 ==================== */
