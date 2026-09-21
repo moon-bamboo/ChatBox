@@ -102,7 +102,7 @@ ChatBox 做三件事：
 
    ```
    Recognized DLL: "ChatBox.dll"
-   Handshake: Answers "ChatBox 0.4.5: ..."
+   Handshake: Answers "ChatBox 0.4.6: ..."
    ...
    ```
 
@@ -122,19 +122,32 @@ ChatBox 做三件事：
 ## 排查：日志里该看到什么
 
 日志按"进程启动时间"分文件，落在游戏目录的 `MsgLog\` 下。
-下面这几行**不受 `LogRaw` 开关控制**，一定会有（都很短，各只写一次）：
+
+**一定会有**的（不受 `LogRaw` 控制，各只写一次）：
 
 | 日志行 | 说明 |
 |---|---|
-| `ChatBox 0.4.5 start` | DLL 加载成功 |
+| `ChatBox 0.4.6 start` | DLL 加载成功 |
 | `hook: frame alive (0x55D360)` | 帧钩子（输入）被执行 —— **热键不灵时先看这行在不在** |
 | `hook: draw alive (0x4F4558)` | 绘制钩子被执行 —— **消息框不显示时先看这行** |
-| `hook: suppress alive (0x5D4A94)` | 原版消息列表已成功被抑制（链表为空时不会有这行，属正常） |
 | `ui: expanded (Ctrl+M)` | 你按下过 `Ctrl+M` —— **按了没这行就是按键没被收到** |
 
-判断链条很简单：`start` 都没有 → DLL 没加载；
-有 `start` 没 `frame alive` → 钩子地址或 `.inj` 有问题；
-有 `frame alive` 但按 `Ctrl+M` 没 `ui:` 行 → 按键被别的窗口/输入法吃了。
+**需要 `LogRaw=1`** 才会有的（排查专用）：
+
+| 日志行 | 说明 |
+|---|---|
+| `beat: 5000ms dFrame=+75 dTick=+75 ...` | 心跳，每 5 秒一行 —— **消息该消失却不消失时看这里** |
+| `frame jumped: 120000 -> 60000` | 检测到读档/切场景造成的帧号跳变（已丢弃，时间不倒退） |
+| `pick:` / `scroll:` / `draw-state:` | 挑选与排版状态，变化时才记 |
+
+判断链条：
+
+- 连 `start` 都没有 → DLL 没加载
+- 有 `start` 没 `frame alive` → 钩子地址或 `.inj` 有问题
+- 有 `frame alive` 但按 `Ctrl+M` 没 `ui:` 行 → 按键被别的窗口/输入法吃了
+- **消息该消失却不消失** → 看 `beat:` 行的 `dTick`：
+  `+0` 说明游戏逻辑帧没在推进（暂停中，属正常）；
+  正常增长却不过期，那才是超时判定的问题
 
 ---
 

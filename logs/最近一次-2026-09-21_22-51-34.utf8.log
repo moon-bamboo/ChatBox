@@ -1,0 +1,111 @@
+[09-21 22:51:34] ==================================================
+[09-21 22:51:34] ChatBox 0.4.5 start
+[09-21 22:51:34] config: ChatBox=1 LogRaw=1 LogText=1 LogUtf8=0
+[09-21 22:51:34] log file: E:\RA2\ModManager-v1.1.0.5\Game\MsgLog\2026-09-21_22-51-34.log
+[09-21 22:51:34] --------------------------------------------------
+[09-21 22:51:34] hook: frame alive (0x55D360)
+[09-21 22:51:34] hook: draw alive (0x4F4558)
+[09-21 22:51:34] draw-state: msgs=0 surf=OK keepLast=1 maxHist=100 maxLines=8
+[09-21 22:51:39] #1 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=22 name="" text="任务目标一：潜入拉斯登堡要塞并击杀罗曼诺夫。"
+[09-21 22:51:39] #2 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=16 name="" text="任务目标二：解救被俘敢死队队员。"
+[09-21 22:51:39] draw-state: msgs=2 surf=OK keepLast=1 maxHist=100 maxLines=8
+[09-21 22:51:39] draw: lineH=17 (BitFont+0x1C=17)
+[09-21 22:51:39] draw: cfg MaxWidth=0 (0 = auto)
+[09-21 22:51:39] scroll: picked=2 totalAll=2 limit=2 skip=0 rows=[0,2)
+[09-21 22:51:44] key: ctrl=1 m=0
+[09-21 22:51:44] key: ctrl=1 m=1
+[09-21 22:51:44] ui: expanded (Ctrl+M)
+[09-21 22:51:44] key: ctrl=1 m=0
+[09-21 22:51:44] key: ctrl=1 m=1
+[09-21 22:51:44] ui: collapsed (Ctrl+M)
+[09-21 22:51:45] key: ctrl=1 m=0
+[09-21 22:51:45] key: ctrl=0 m=0
+[09-21 22:51:45] ui: expanded (click)
+[09-21 22:51:45] ui: collapsed (click)
+[09-21 22:52:04] ui: expanded (click)
+[09-21 22:52:04] ui: collapsed (click)
+[09-21 22:52:14] #3 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=22 name="" text="任务目标一：潜入拉斯登堡要塞并击杀罗曼诺夫。"
+[09-21 22:52:14] #4 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=16 name="" text="任务目标二：解救被俘敢死队队员。"
+[09-21 22:52:14] draw-state: msgs=4 surf=OK keepLast=1 maxHist=100 maxLines=8
+[09-21 22:52:14] scroll: picked=4 totalAll=4 limit=4 skip=0 rows=[0,4)
+[09-21 22:52:25] #5 ret=0x00730AC8 id=0 cs=17 style=0x00004046 to=480 sp=1 nameLen=0 textLen=23 name="" text="您进入了路径点模式。释放路径点功能键即可退出。"
+[09-21 22:52:26] #6 ret=0x00730AC8 id=0 cs=17 style=0x00004046 to=480 sp=1 nameLen=0 textLen=26 name="" text="当您退出路径点模式时，部队将会跟随其路径点路线前进。"
+[09-21 22:52:28] #7 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=16 name="" text="苏军发现了异常，巡逻队数量增加。"
+[09-21 22:52:28] draw-state: msgs=5 surf=OK keepLast=1 maxHist=100 maxLines=8
+[09-21 22:52:28] scroll: picked=5 totalAll=5 limit=5 skip=0 rows=[0,5)
+[09-21 22:52:29] #8 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=24 name="" text="你损失了一个队员，已经无法胜利，但可以继续游戏。"
+[09-21 22:52:29] draw-state: msgs=6 surf=OK keepLast=1 maxHist=100 maxLines=8
+[09-21 22:52:29] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:52:35] scroll: picked=1 totalAll=1 limit=1 skip=0 rows=[0,1)
+[09-21 22:52:36] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:52:36] ui: collapsed (click)
+[09-21 22:52:36] scroll: picked=1 totalAll=1 limit=1 skip=0 rows=[0,1)
+[09-21 22:52:48] scroll: picked=3 totalAll=3 limit=3 skip=0 rows=[0,3)
+[09-21 22:52:48] #9 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=22 name="" text="任务目标一：潜入拉斯登堡要塞并击杀罗曼诺夫。"
+[09-21 22:52:48] #10 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=16 name="" text="任务目标二：解救被俘敢死队队员。"
+[09-21 22:52:48] draw-state: msgs=8 surf=OK keepLast=1 maxHist=100 maxLines=8
+[09-21 22:52:48] scroll: picked=4 totalAll=4 limit=4 skip=0 rows=[0,4)
+[09-21 22:53:10] #11 ret=0x00730AC8 id=0 cs=17 style=0x00004046 to=480 sp=1 nameLen=0 textLen=23 name="" text="您进入了路径点模式。释放路径点功能键即可退出。"
+[09-21 22:53:11] #12 ret=0x00730AC8 id=0 cs=17 style=0x00004046 to=480 sp=1 nameLen=0 textLen=13 name="" text="您无法于建筑物使用路径点。"
+[09-21 22:53:12] #13 ret=0x00730AC8 id=0 cs=17 style=0x00004046 to=480 sp=1 nameLen=0 textLen=13 name="" text="您无法于建筑物使用路径点。"
+[09-21 22:53:12] #14 ret=0x00730AC8 id=0 cs=17 style=0x00004046 to=480 sp=1 nameLen=0 textLen=26 name="" text="当您退出路径点模式时，部队将会跟随其路径点路线前进。"
+[09-21 22:53:14] #15 ret=0x00730AC8 id=0 cs=17 style=0x00004046 to=480 sp=1 nameLen=0 textLen=13 name="" text="您无法于建筑物使用路径点。"
+[09-21 22:53:14] #16 ret=0x00730AC8 id=0 cs=17 style=0x00004046 to=480 sp=1 nameLen=0 textLen=13 name="" text="您无法于建筑物使用路径点。"
+[09-21 22:53:24] #17 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=16 name="" text="苏军发现了异常，巡逻队数量增加。"
+[09-21 22:53:24] draw-state: msgs=9 surf=OK keepLast=1 maxHist=100 maxLines=8
+[09-21 22:53:24] scroll: picked=5 totalAll=5 limit=5 skip=0 rows=[0,5)
+[09-21 22:53:28] scroll: picked=1 totalAll=1 limit=1 skip=0 rows=[0,1)
+[09-21 22:53:40] scroll: picked=5 totalAll=5 limit=5 skip=0 rows=[0,5)
+[09-21 22:53:40] #18 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=22 name="" text="任务目标一：潜入拉斯登堡要塞并击杀罗曼诺夫。"
+[09-21 22:53:40] #19 ret=0x006DE127 id=0 cs=25 style=0x00004046 to=2700 sp=0 nameLen=0 textLen=16 name="" text="任务目标二：解救被俘敢死队队员。"
+[09-21 22:53:40] draw-state: msgs=11 surf=OK keepLast=1 maxHist=100 maxLines=8
+[09-21 22:53:40] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:53:42] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:53:43] ui: collapsed (click outside)
+[09-21 22:53:43] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:53:44] ui: expanded (click)
+[09-21 22:53:44] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:53:46] ui: collapsed (click outside)
+[09-21 22:53:46] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:53:49] ui: expanded (click)
+[09-21 22:53:49] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:53:50] ui: collapsed (click outside)
+[09-21 22:53:50] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:53:52] ui: expanded (click)
+[09-21 22:53:52] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:53:54] ui: collapsed (click outside)
+[09-21 22:53:54] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:54:01] ui: expanded (click)
+[09-21 22:54:01] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:54:06] ui: collapsed (click)
+[09-21 22:54:06] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:56:23] ui: expanded (click)
+[09-21 22:56:23] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:56:23] ui: collapsed (click outside)
+[09-21 22:56:23] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:56:24] ui: expanded (click)
+[09-21 22:56:24] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:56:25] ui: collapsed (click outside)
+[09-21 22:56:25] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:56:25] ui: expanded (click)
+[09-21 22:56:25] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:56:27] ui: collapsed (click outside)
+[09-21 22:56:27] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:57:11] ui: expanded (click)
+[09-21 22:57:11] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:57:12] ui: collapsed (click outside)
+[09-21 22:57:12] scroll: picked=6 totalAll=6 limit=6 skip=0 rows=[0,6)
+[09-21 22:57:13] ui: expanded (click)
+[09-21 22:57:13] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:57:13] ui: collapsed (click outside)
+[09-21 22:57:13] scroll: picked=7 totalAll=7 limit=7 skip=0 rows=[0,7)
+[09-21 22:57:14] ui: expanded (click)
+[09-21 22:57:14] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:57:15] ui: collapsed (click outside)
+[09-21 22:57:15] scroll: picked=7 totalAll=7 limit=7 skip=0 rows=[0,7)
+[09-21 22:57:15] ui: expanded (click)
+[09-21 22:57:15] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)
+[09-21 22:57:16] ui: collapsed (click outside)
+[09-21 22:57:16] scroll: picked=7 totalAll=7 limit=7 skip=0 rows=[0,7)
+[09-21 22:57:18] ui: expanded (click)
+[09-21 22:57:18] scroll: picked=11 totalAll=11 limit=11 skip=0 rows=[0,11)

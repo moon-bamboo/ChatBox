@@ -23,7 +23,7 @@
 #include <windows.h>
 #include "offsets.h"
 
-#define CB_VERSION      "0.4.5"
+#define CB_VERSION      "0.4.6"
 #define CB_SECTION      "ChatBox"
 
 #define MAX_PATH_LEN    260
@@ -423,7 +423,7 @@ typedef struct {
     wchar_t  display[MAX_DISPLAY_W];  /* 拼好的显示文本: "名字: 内容" 或纯正文 */
     int      color;              /* ColorSchemeIdx -> 玩家颜色 */
     unsigned retAddr;            /* 调用者返回地址(分类用) */
-    unsigned frame;              /* 收到时的游戏帧号 */
+    unsigned frame;              /* 收到时的 g_Tick(单调帧计数, 见下) */
     int      timeout;            /* 超时帧数; -1 = 永不消失 */
     int      silent;             /* 1 = 操作提示 */
     int      clipped;            /* 1 = 正文过长被截断过 */
@@ -432,6 +432,37 @@ typedef struct {
 static ChatMsg g_Msgs[MAX_MSGS];
 static int     g_MsgHead  = 0;   /* 下一条要写入的槽位 */
 static int     g_MsgCount = 0;   /* 当前有效条数 */
+
+/* ==================== 单调递增的"逻辑帧"计数 ====================
+ *
+ * 超时判断需要一个【只会前进】的时间基准, 而引擎的 CurrentFrame (0xA8ED84)
+ * 会【回退】。
+ *
+ * 实测 (2026-09-21 日志): 读档会把 CurrentFrame 拉回存档时的值。于是每次读档
+ * 之后收到的消息, 记下的 m->frame 都是"回退后的小值 + 一点增量", 而当前 frame
+ * 也在同一量级 —— 两者之差始终很小, 消息【永远不超时】。
+ * 玩家看到的现象就是: 读档两三次后, 那几条任务目标重复出现好几遍, 而且死活
+ * 不消失(折叠态一直显示, 展开态反而正常)。
+ *
+ * 更早用 break 而非 continue 时, 读档还会让"读档前"的消息因无符号下溢被判定
+ * 为已超时 —— 同一个根因的另一种表现。
+ *
+ * 所以这里自己维护一个只增不减的 g_Tick: 每个逻辑帧加上 CurrentFrame 的
+ * 【增量】。增量若因回退/跳变而算出天文数字, 直接丢弃(当 0 处理) ——
+ * 于是读档最多让时间"卡一下", 绝不会倒退。
+ *
+ * 消息的年龄 = g_Tick - m->frame, 两个量都单调, 差值因此永远有意义。
+ */
+
+/* 单次增量超过它就认定 CurrentFrame 跳变了(读档/切场景)。
+ * 依据: CurrentFrame 是【逻辑帧号】, 每逻辑帧 +1; 正常帧率 15~60 fps,
+ * 本钩子每秒被调用约 600 次 ⇒ 正常情况下每次看到的增量就是 1,
+ * 最多因卡顿跳几帧。放大到 10 万帧(约 1 小时)仍远小于"读档回退"
+ * 造成的那种 40 亿级下溢, 所以这个阈值既不会误杀、也不会漏判。 */
+#define TICK_MAX_DELTA  100000u
+
+static unsigned g_Tick      = 0;   /* 单调递增的逻辑帧计数 */
+static unsigned g_LastFrame = 0;   /* 上一次看到的 CurrentFrame 原值 */
 
 /* i = 0 表示最旧的一条 */
 static ChatMsg* MsgAt(int i)
@@ -741,7 +772,7 @@ static int MouseInBox(void)
 
     if (!g_BoxFrame) return 0;
 
-    now = *(unsigned*)ADDR_CURRENT_FRAME;
+    now = g_Tick;   /* 用单调帧计数: CurrentFrame 会因读档回退, 会让保鲜判定错乱 */
     if (now - g_BoxFrame > BOX_HIT_FRESH_FRAMES) return 0;   /* 框已经不在画了 */
 
     m = *(void**)ADDR_WWMOUSE_INSTANCE;
@@ -1019,7 +1050,8 @@ static void DrawMessages(void)
         }
     }
 
-    frame = *(unsigned*)ADDR_CURRENT_FRAME;
+    /* 用单调帧计数而不是 CurrentFrame —— 后者会因读档回退(见 g_Tick 说明) */
+    frame = g_Tick;
 
     /* --- ① 挑选要进入排版的消息(从最新往回) ---
      * 折叠态: 消息超时就跳过 —— 效果接近原版"显示一段时间后自动消失"。
@@ -1206,7 +1238,7 @@ static void DrawMessages(void)
     /* 记下本帧的矩形 + 帧号 —— 鼠标命中判定(点击切换、滚轮、吞点击)都用它。
      * 帧号用于保鲜: 消息框不再绘制后, 命中判定会自动失效(见 MouseInBox)。 */
     g_BoxRect  = rect;
-    g_BoxFrame = *(unsigned*)ADDR_CURRENT_FRAME;
+    g_BoxFrame = g_Tick;
 
     /* --- ④b 滚动条 ---
      *
@@ -1326,6 +1358,85 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_FrameHook(void* regs)
     {
         static unsigned char s_alive = 0;
         if (!s_alive) { s_alive = 1; LogLine("hook: frame alive (0x55D360)"); }
+    }
+
+    /* ---- 推进单调帧计数 g_Tick(见它的说明) ----
+     * 本钩子每秒被调用约 600 次, 但只有 CurrentFrame 真正变化时才推进,
+     * 所以 g_Tick 的增速就是逻辑帧率, 与钩子调用频率无关。 */
+    {
+        unsigned f = *(unsigned*)ADDR_CURRENT_FRAME;
+
+        if (f != g_LastFrame)
+        {
+            unsigned old    = g_LastFrame;
+            unsigned d      = f - old;
+            int      jumped = 0;
+
+            /* 增量大到不可能是"一帧一帧走过来的" -> CurrentFrame 发生了跳变
+             * (读档、切换场景等)。丢弃这次增量, 绝不让时间倒退。 */
+            if (d > TICK_MAX_DELTA) { jumped = 1; d = 0; }
+
+            g_LastFrame = f;
+            g_Tick     += d;
+
+            if (jumped && g_Cfg.LogRaw)
+            {
+                char b1[16], b2[16], buf[160];
+                unsigned q = 0;
+                UtoA(old,    b1);
+                UtoA(f,      b2);
+                q = AppendCStr(buf, q, "frame jumped: ", sizeof(buf));
+                q = AppendCStr(buf, q, b1, sizeof(buf));
+                q = AppendCStr(buf, q, " -> ", sizeof(buf));
+                q = AppendCStr(buf, q, b2, sizeof(buf));
+                q = AppendCStr(buf, q, "  (时间不倒退, 这次增量丢弃)", sizeof(buf));
+                LogLine(buf);
+            }
+        }
+
+        /* 心跳(仅 LogRaw=1): 每 5 秒【真实时间】记一行, 报告 CurrentFrame
+         * 和 g_Tick 各自前进了多少。
+         *
+         * 这一行是排查"消息不过期"的钥匙:
+         *   dFrame=+0  ->  CurrentFrame 根本没动(暂停/地址失效)
+         *   dFrame 很大而 dTick=+0  ->  一直在跳变, 每次都被当成读档丢掉了
+         *   两者都正常增长  ->  超时逻辑本身有问题 */
+        if (g_Cfg.LogRaw)
+        {
+            static DWORD    s_beat     = 0;
+            static unsigned s_beatF    = 0;
+            static unsigned s_beatTick = 0;
+            DWORD now = GetTickCount();
+
+            if (s_beat == 0)
+            {
+                s_beat = now; s_beatF = f; s_beatTick = g_Tick;
+            }
+            else if (now - s_beat >= 5000)
+            {
+                char b1[16], b2[16], b3[16], b4[16], b5[16], buf[200];
+                unsigned q = 0;
+                UtoA(now - s_beat,      b1);   /* 实际经过的毫秒 */
+                UtoA(f - s_beatF,       b2);   /* CurrentFrame 增量 */
+                UtoA(g_Tick - s_beatTick, b3); /* 我们采纳的增量 */
+                UtoA((unsigned)g_MsgCount, b4);
+                UtoA(g_Tick,            b5);
+
+                q = AppendCStr(buf, q, "beat: ", sizeof(buf));
+                q = AppendCStr(buf, q, b1, sizeof(buf));
+                q = AppendCStr(buf, q, "ms dFrame=+", sizeof(buf));
+                q = AppendCStr(buf, q, b2, sizeof(buf));
+                q = AppendCStr(buf, q, " dTick=+", sizeof(buf));
+                q = AppendCStr(buf, q, b3, sizeof(buf));
+                q = AppendCStr(buf, q, " tick=", sizeof(buf));
+                q = AppendCStr(buf, q, b5, sizeof(buf));
+                q = AppendCStr(buf, q, " msgs=", sizeof(buf));
+                q = AppendCStr(buf, q, b4, sizeof(buf));
+                LogLine(buf);
+
+                s_beat = now; s_beatF = f; s_beatTick = g_Tick;
+            }
+        }
     }
 
     if (g_Cfg.Enable)
@@ -1516,8 +1627,9 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_AddMessageHook(void* regs
      * 放进来会把真正要看的内容冲掉。它们仍然照常写日志。 */
     if (!(g_Cfg.FilterSilent && argSP))
     {
+        /* 时间戳用单调帧计数 g_Tick, 不用 CurrentFrame(读档会回退, 见其说明) */
         MsgPush(argName, argMsg, (int)argColor, retAddr,
-                *(unsigned*)ADDR_CURRENT_FRAME, (int)argTimeout, (int)argSP);
+                g_Tick, (int)argTimeout, (int)argSP);
     }
 
     LogLine(line);
