@@ -1,4 +1,6 @@
 0x5D3BA0 = ChatBox_AddMessageHook, 6
+0x55D360 = ChatBox_FrameHook, 5
+0x4F455D = ChatBox_DrawCallHook, 5
 0x5D4A94 = ChatBox_MessageDrawHook, 7
 0x777998 = ChatBox_ScrollWheelHook, 6
 0x533F50 = ChatBox_ScrollSidebarHook, 5

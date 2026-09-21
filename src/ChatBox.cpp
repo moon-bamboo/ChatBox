@@ -23,7 +23,7 @@
 #include <windows.h>
 #include "offsets.h"
 
-#define CB_VERSION      "0.4.0"
+#define CB_VERSION      "0.4.3"
 #define CB_SECTION      "ChatBox"
 
 #define MAX_PATH_LEN    260
@@ -642,6 +642,29 @@ static void PollKeys(void)
 
     if (!g_Cfg.Enable) return;
 
+    /* 诊断(LogRaw=1): 记录 Ctrl / M 的按键状态变化。
+     * 排查"Ctrl+M 没反应"用 —— 能看出是完全检测不到按键,
+     * 还是检测到了但切换逻辑没走。 */
+    if (g_Cfg.LogRaw)
+    {
+        static unsigned char s_lastCtrl = 0, s_lastM = 0;
+        unsigned char c = (unsigned char)KeyDown(VK_CONTROL);
+        unsigned char m = (unsigned char)KeyDown('M');
+        if (c != s_lastCtrl || m != s_lastM)
+        {
+            char b1[4], b2[4], buf[64];
+            unsigned q = 0;
+            s_lastCtrl = c; s_lastM = m;
+            b1[0] = c ? '1' : '0'; b1[1] = 0;
+            b2[0] = m ? '1' : '0'; b2[1] = 0;
+            q = AppendCStr(buf, q, "key: ctrl=", sizeof(buf));
+            q = AppendCStr(buf, q, b1, sizeof(buf));
+            q = AppendCStr(buf, q, " m=", sizeof(buf));
+            q = AppendCStr(buf, q, b2, sizeof(buf));
+            LogLine(buf);
+        }
+    }
+
     /* Ctrl + M : 切换展开 / 收起 */
     {
         static unsigned char s_pCtrlM = 0;
@@ -687,15 +710,34 @@ static void PollKeys(void)
  * 这三个钩子都【只读】输入、只在命中消息框时改变自身状态, 不碰游戏对象。
  */
 
-static RectangleStruct g_BoxRect;    /* 上一帧消息框的屏幕矩形(命中判定用) */
-static int             g_BoxValid = 0;
+static RectangleStruct g_BoxRect;    /* 上一次画出的消息框矩形(命中判定用) */
+static unsigned        g_BoxFrame = 0; /* 画它时的帧号 —— 用于"保鲜" */
+
+/*
+ * 鼠标是否落在消息框上。
+ *
+ * ⚠️ 必须按帧号保鲜, 不能只看"画过没有"。
+ *
+ * DrawMessages 只在钩子被调用时执行, 而钩子只在原版消息链表非空时才被调用;
+ * 一旦某轮它提前 return, 那个"画过"的标志就会永远停在 1、矩形停在最后一次的
+ * 位置 —— 结果那块区域【永久吞点击】, 表现为"消息框已经没了, 但左上角一片
+ * 区域再也选不中单位"。(实测反馈过的现象。)
+ *
+ * 所以只有"最近 2 帧内画过"才算命中, 过期自动失效。
+ */
+#define BOX_HIT_FRESH_FRAMES 2
 
 static int MouseInBox(void)
 {
-    void* m;
-    int   mx, my;
+    void*    m;
+    int      mx, my;
+    unsigned now;
 
-    if (!g_BoxValid) return 0;
+    if (!g_BoxFrame) return 0;
+
+    now = *(unsigned*)ADDR_CURRENT_FRAME;
+    if (now - g_BoxFrame > BOX_HIT_FRESH_FRAMES) return 0;   /* 框已经不在画了 */
+
     m = *(void**)ADDR_WWMOUSE_INSTANCE;
     if (!m) return 0;
 
@@ -891,12 +933,45 @@ static void DrawMessages(void)
 
     if (!g_Cfg.ShowWindow) return;
 
-    /* 键盘/鼠标交互放在最前面: 即使当前没消息, 也要能响应切换热键 */
-    PollKeys();
-    PollMouse();
+    /* 注: 键盘/鼠标交互【不在这里】—— 它们已移到帧钩子(每帧必调),
+     * 因为本函数所在的钩子只在原版消息链表非空时才执行, 靠不住。
+     * 详见 ChatBox_FrameHook 的注释。 */
 
-    g_BoxValid = 0;      /* 本轮若没画出消息框, 命中判定就应为空 */
+    /* 注: 不再需要手动清命中标志 —— MouseInBox() 按 g_BoxFrame 的帧号保鲜,
+     * 只要本轮没画到框, 那个帧号自然就"太旧"了。 */
     surf = *(void**)ADDR_DSURFACE_COMPOSITE;
+
+    /* 诊断(LogRaw=1): 记录进入绘制时的关键状态, 变化才记一行。
+     * 用于定位"消息框整个不出现"这类问题 —— 能看出是卡在
+     * 没有消息(msgs=0)、没有画布(surf=NULL), 还是消息被全部过滤。 */
+    if (g_Cfg.LogRaw)
+    {
+        static int s_lastMsgs = -1, s_lastSurf = -1, s_lastPick = -1;
+        int curSurf = surf ? 1 : 0;
+        if (g_MsgCount != s_lastMsgs || curSurf != s_lastSurf)
+        {
+            char b1[16], b2[16], b3[16], b4[16], buf[220];
+            unsigned q = 0;
+            s_lastMsgs = g_MsgCount; s_lastSurf = curSurf;
+            (void)s_lastPick;
+            UtoA((unsigned)g_MsgCount, b1);
+            UtoA((unsigned)g_Cfg.KeepLast, b2);
+            UtoA((unsigned)g_Cfg.MaxHistory, b3);
+            UtoA((unsigned)g_Cfg.MaxLines, b4);
+            q = AppendCStr(buf, q, "draw-state: msgs=", sizeof(buf));
+            q = AppendCStr(buf, q, b1, sizeof(buf));
+            q = AppendCStr(buf, q, " surf=", sizeof(buf));
+            q = AppendCStr(buf, q, curSurf ? "OK" : "NULL", sizeof(buf));
+            q = AppendCStr(buf, q, " keepLast=", sizeof(buf));
+            q = AppendCStr(buf, q, b2, sizeof(buf));
+            q = AppendCStr(buf, q, " maxHist=", sizeof(buf));
+            q = AppendCStr(buf, q, b3, sizeof(buf));
+            q = AppendCStr(buf, q, " maxLines=", sizeof(buf));
+            q = AppendCStr(buf, q, b4, sizeof(buf));
+            LogLine(buf);
+        }
+    }
+
     if (!surf) return;
     if (g_MsgCount <= 0) return;
 
@@ -1113,9 +1188,10 @@ static void DrawMessages(void)
     board.R = 0; board.G = 0; board.B = 0;
     FillRectTransVt(surf, &rect, &board, g_Cfg.BoardOpacity);
 
-    /* 记下本帧的矩形 —— 鼠标命中判定(点击切换、滚轮、吞点击)都用它 */
+    /* 记下本帧的矩形 + 帧号 —— 鼠标命中判定(点击切换、滚轮、吞点击)都用它。
+     * 帧号用于保鲜: 消息框不再绘制后, 命中判定会自动失效(见 MouseInBox)。 */
     g_BoxRect  = rect;
-    g_BoxValid = 1;
+    g_BoxFrame = *(unsigned*)ADDR_CURRENT_FRAME;
 
     /* --- ④b 滚动条 ---
      *
@@ -1212,24 +1288,72 @@ static void DrawMessages(void)
     }
 }
 
-/* 绘制接管: 钩在 MessageListClass::Draw **内部**"画消息列表"的指令上 (0x5D4A94)
+/* ==================== 帧钩子: 输入处理 ====================
  *
- * 返回 0x5D4A9B = 只跳过"画消息列表", 同一个函数里的【输入框】照旧由原版绘制;
- * 返回 0 = 执行原指令, 原版消息列表也照旧显示。
+ * 输入处理必须放在【每帧必被调用】的地方。
  *
- * ⚠️ 曾经钩在更外层的调用点(0x4F455D)并整个跳掉 Draw, 结果联机按回车时
- *    看不到"从【玩家名】："输入框 —— 因为 Draw 同时负责画输入框和消息列表。
+ * ⚠️ 曾经把 PollKeys/PollMouse 放在 DrawMessages 里(而它在 MessageListClass::Draw
+ *    内部的钩子上)。那个钩子只在【原版消息链表非空】时才执行 —— 于是所有消息
+ *    过期、链表清空之后, 绘制钩子连同输入处理一起停止工作: 按 Ctrl+M 没反应、
+ *    日志里连一行记录都没有(实测反馈)。
+ *
+ * 帧钩子 0x55D360 每个逻辑帧都会被调用, 与"有没有消息"无关, 所以输入放这里。
+ * (AutoKit / AutoLoad 用的也是这个地址。)
  */
+extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_FrameHook(void* regs)
+{
+    (void)regs;
+
+    /* 宿主兜底校验: 只在 gamemd.exe 内工作 */
+    if (!GetModuleHandleA("gamemd.exe")) return 0;
+
+    EnsureInit();
+    if (g_Cfg.Enable)
+    {
+        PollKeys();
+        PollMouse();
+    }
+    return 0;
+}
+
+/* ==================== 绘制 ====================
+ *
+ * 分两个钩子配合, 各管一件事:
+ *
+ *   0x4F455D  ChatBox_DrawCallHook   —— 原版 `call MessageListClass::Draw` 的调用点。
+ *             这里 4F455D 是【无条件】每帧执行的, 所以画框的时机可靠
+ *             (不再依赖"消息链表非空")。我们在这里画自己的消息框, 返回 0
+ *             让原版 Draw 继续跑 —— 它负责画【输入框】。
+ *
+ *   0x5D4A94  ChatBox_MessageDrawHook —— Draw 内部画【消息列表】的那三条指令。
+ *             返回 0x5D4A9B 跳过它, 于是原版消息列表不画(由我们的框替代),
+ *             而同一个函数里的输入框照旧。
+ *
+ * 之所以不让第一个钩子直接跳过原版 Draw: 那样会连输入框一起跳掉
+ * (联机按回车时"从【玩家名】："就不见了)。
+ */
+
+/* 画自己的消息框 —— 挂在无条件执行的调用点上 */
+extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_DrawCallHook(void* regs)
+{
+    (void)regs;
+    EnsureInit();
+
+    if (g_Cfg.Enable && g_Cfg.ShowWindow)
+        DrawMessages();
+
+    return 0;   /* 让原版 Draw 继续 —— 它要画输入框 */
+}
+
+/* 只跳过原版的消息列表绘制 */
 extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_MessageDrawHook(void* regs)
 {
     (void)regs;
     EnsureInit();
 
     if (g_Cfg.Enable && g_Cfg.ShowWindow)
-    {
-        DrawMessages();
         return ADDR_AFTER_MSGLIST_DRAW;   /* 只跳过消息列表, 保留输入框 */
-    }
+
     return 0;                             /* 执行原指令, 原版照旧显示 */
 }
 

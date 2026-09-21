@@ -105,7 +105,10 @@ ChatBox 做三件事：
    ...
    ```
 
-   与 NoCopyProtect / AutoLoad / AutoKit 共存时钩子总数为 15。
+   与 NoCopyProtect / AutoLoad / AutoKit 共存时钩子总数为 17。
+
+> ⚠️ **升级时必须同时替换 `ChatBox.dll` 和 `ChatBox.dll.inj`**。
+> 两个文件是一对：`.inj` 决定挂哪几个钩子，只换 DLL 会导致钩子对不上。
 
 > **纯原版 gamemd.exe 带有防拷保护**，直接运行会静默退出。若你的环境没有
 > CnCNet 客户端，可能需要先解决这个问题（本项目作者另有一个 `NoCopyProtect`
@@ -176,7 +179,7 @@ g++ -O2 -shared -fno-exceptions -fno-rtti -o ChatBox.dll ChatBox.cpp ^
 
 | 文档 | 内容 |
 |---|---|
-| [`技术方案.md`](技术方案.md) | 实现原理、五个钩子、引擎 API 用法、地址偏移表、配置详解 |
+| [`技术方案.md`](技术方案.md) | 实现原理、七个钩子、引擎 API 用法、地址偏移表、配置详解 |
 | [`开发记录.md`](开发记录.md) | 版本历史、时间线、12 条踩坑记录（含三次颜色弯路与两次崩溃复盘） |
 
 `logs/` 目录保留了开发过程中的实测日志与崩溃现场快照，作为文档结论的证据。
