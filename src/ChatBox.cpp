@@ -23,7 +23,7 @@
 #include <windows.h>
 #include "offsets.h"
 
-#define CB_VERSION      "0.4.6"
+#define CB_VERSION      "0.5.0"
 #define CB_SECTION      "ChatBox"
 
 #define MAX_PATH_LEN    260
@@ -65,8 +65,13 @@ typedef struct {
     int ExpandLines;    /* ExpandLines=15   展开态最多显示多少行 */
     int ScrollStep;     /* ScrollStep=5     翻页/滚轮一次的步长(行) */
     int SysUseMyColor;  /* SysUseMyColor=0  1 = 系统消息用当前玩家颜色 */
-    int FilterSilent;   /* FilterSilent=1   1 = 不进消息框(操作提示: 快捷键/路径点) */
-    int ShowLogHint;    /* ShowLogHint=1    1 = 把操作提示照旧用原版样式画出来 */
+    int FilterSilent;   /* FilterSilent=1   1 = 操作提示不进【主历史】(改由提示区显示) */
+
+    /* ---- 操作提示区(快捷键/路径点提示的独立显示区, 贴在主框下方) ---- */
+    int HintArea;       /* HintArea=1     1 = 开启提示区; 0 = 回到旧行为(见 FilterSilent) */
+    int HintGap;        /* HintGap=4      与主框底边之间的缝隙(像素) */
+    int HintLines;      /* HintLines=4    提示区最多显示几行 */
+    int HintOpacity;    /* HintOpacity=45 提示区底板不透明度 0~100 (0 = 不画底板) */
 } ChatBoxConfig;
 
 static ChatBoxConfig g_Cfg;
@@ -362,7 +367,10 @@ static void LoadConfig(void)
     g_Cfg.ScrollStep   = GetPrivateProfileIntA(CB_SECTION, "ScrollStep",  5,   g_IniPath);
     g_Cfg.SysUseMyColor= GetPrivateProfileIntA(CB_SECTION, "SysUseMyColor", 0, g_IniPath);
     g_Cfg.FilterSilent = GetPrivateProfileIntA(CB_SECTION, "FilterSilent", 1,  g_IniPath);
-    g_Cfg.ShowLogHint  = GetPrivateProfileIntA(CB_SECTION, "ShowLogHint",  0,  g_IniPath);
+    g_Cfg.HintArea     = GetPrivateProfileIntA(CB_SECTION, "HintArea",     1,  g_IniPath);
+    g_Cfg.HintGap      = GetPrivateProfileIntA(CB_SECTION, "HintGap",      4,  g_IniPath);
+    g_Cfg.HintLines    = GetPrivateProfileIntA(CB_SECTION, "HintLines",    4,  g_IniPath);
+    g_Cfg.HintOpacity  = GetPrivateProfileIntA(CB_SECTION, "HintOpacity",  45, g_IniPath);
 
     g_Cfg.Enable  = g_Cfg.Enable  ? 1 : 0;
     g_Cfg.LogRaw  = g_Cfg.LogRaw  ? 1 : 0;
@@ -372,11 +380,17 @@ static void LoadConfig(void)
     g_Cfg.ShowWindow    = g_Cfg.ShowWindow    ? 1 : 0;
     g_Cfg.SysUseMyColor = g_Cfg.SysUseMyColor ? 1 : 0;
     g_Cfg.FilterSilent = g_Cfg.FilterSilent ? 1 : 0;
-    g_Cfg.ShowLogHint  = g_Cfg.ShowLogHint  ? 1 : 0;
+    g_Cfg.HintArea     = g_Cfg.HintArea     ? 1 : 0;
     if (g_Cfg.MaxLines     < 1)   g_Cfg.MaxLines     = 1;
     if (g_Cfg.MaxLines     > 40)  g_Cfg.MaxLines     = 40;
     if (g_Cfg.BoardOpacity < 0)   g_Cfg.BoardOpacity = 0;
     if (g_Cfg.BoardOpacity > 100) g_Cfg.BoardOpacity = 100;
+    if (g_Cfg.HintGap      < 0)   g_Cfg.HintGap      = 0;
+    if (g_Cfg.HintGap      > 200) g_Cfg.HintGap      = 200;
+    if (g_Cfg.HintLines    < 1)   g_Cfg.HintLines    = 1;
+    if (g_Cfg.HintLines    > 20)  g_Cfg.HintLines    = 20;
+    if (g_Cfg.HintOpacity  < 0)   g_Cfg.HintOpacity  = 0;
+    if (g_Cfg.HintOpacity  > 100) g_Cfg.HintOpacity  = 100;
     if (g_Cfg.MaxWidth < 0)       g_Cfg.MaxWidth     = 0;
     if (g_Cfg.TopGapLines < 0)    g_Cfg.TopGapLines  = 0;
     if (g_Cfg.TopGapLines > 10)   g_Cfg.TopGapLines  = 10;
@@ -472,6 +486,49 @@ static ChatMsg* MsgAt(int i)
     return &g_Msgs[idx % MAX_MSGS];
 }
 
+/* ==================== 操作提示区(快捷键/路径点提示) ====================
+ *
+ * 这些消息(silent=1)的特点是【又频繁又啰嗦】—— 实测一局里"选取部队横越地图"
+ * 这类提示就有 20 多条。放进主历史会把真正要看的聊天和剧情冲掉, 所以默认
+ * 不进主历史。
+ *
+ * 但它们也不是全无用处(路径点模式、通信信标之类确实需要看一眼), 所以给它们
+ * 一个【独立的小缓冲】, 显示在主消息框正下方的一块独立区域里:
+ *
+ *   - 与主历史完全隔离: 不占 MaxHistory、不影响行号、不参与滚动
+ *   - 每条各带自己的超时, 到点自然消失 —— 不需要用户手动清
+ *   - 主框底边在哪, 它就跟到哪(见 g_BoxBottom), 两者间距固定
+ *
+ * 用独立的环形缓冲而不是复用 g_Msgs, 是因为两者语义差别很大:
+ * 主历史要能翻、要能展开、要"永不过期"; 提示区只要求"最新的几条、会自己消失"。
+ * 硬塞进一个数组只会把两边的逻辑都搞复杂。 */
+#define MAX_HINTS    24    /* 提示缓冲容量(环形, 超出覆盖最旧的) */
+#define MAX_HINT_W   256   /* 单条提示最多存这么多字符 */
+
+typedef struct {
+    wchar_t  text[MAX_HINT_W];
+    unsigned frame;        /* 收入时的 g_Tick */
+    int      timeout;      /* 超时帧数; <= 0 当作不自动消失 */
+    int      color;        /* ColorScheme 索引(取色与主框一致) */
+} HintMsg;
+
+static HintMsg g_Hints[MAX_HINTS];
+static int     g_HintHead  = 0;   /* 下一条要写入的槽位 */
+static int     g_HintCount = 0;   /* 当前有效条数 */
+
+/* i = 0 表示最旧的一条 */
+static HintMsg* HintAt(int i)
+{
+    int idx = g_HintHead - g_HintCount + i;
+    while (idx < 0) idx += MAX_HINTS;
+    return &g_Hints[idx % MAX_HINTS];
+}
+
+/* 消息框底边(提示区跟着它走) + 本帧字高与框宽(三个绘制函数共用) */
+static int g_BoxBottom = 0;
+static int g_LineH     = 0;
+static int g_BoxWidth  = 0;
+
 /* 拷贝宽字符串; 超长则截断并补 "..." , 让"被截断"一眼可见。
  * 返回 1 表示发生了截断。
  *
@@ -522,6 +579,21 @@ static void MsgPush(const wchar_t* name, const wchar_t* text, int color,
 
     g_MsgHead = (g_MsgHead + 1) % MAX_MSGS;
     if (g_MsgCount < MAX_MSGS) g_MsgCount++;
+}
+
+/* 收一条操作提示进提示区。
+ * 与 MsgPush 的区别: 不拼来源名(这类消息实测 name 恒为空)、不计入主历史。 */
+static void HintPush(const wchar_t* text, int color, int timeout)
+{
+    HintMsg* h = &g_Hints[g_HintHead];
+
+    CopyW(h->text, text, MAX_HINT_W);
+    h->frame   = g_Tick;
+    h->timeout = timeout;
+    h->color   = color;
+
+    g_HintHead = (g_HintHead + 1) % MAX_HINTS;
+    if (g_HintCount < MAX_HINTS) g_HintCount++;
 }
 
 /* ==================== 颜色 ==================== */
@@ -653,6 +725,32 @@ static int WrapText(const wchar_t* text, int width, TextLine* out, int maxOut)
 static int g_Expanded = 0;   /* 0 = 折叠态(只显示最新几行), 1 = 展开态(可翻历史) */
 static int g_Scroll   = 0;   /* 展开态的滚动量: 0 = 看到最新, 越大越往历史翻 */
 
+/* ==================== 一键清空 (Ctrl+L) ====================
+ *
+ * 只清【内存里的历史缓冲】, 日志文件一个字都不动 —— 已经落盘的东西照旧可查。
+ *
+ * 清空后消息框会消失(挑选结果为 0), 新消息来了自然重新出现。这是预期的:
+ * 按这个键就是要立刻把屏幕清干净。
+ *
+ * 两条"看起来会出事、其实不会"的地方, 记下来免得后人担心:
+ *   - 热键不会跟着失灵 —— 输入处理在帧钩子(0x55D360)上, 与"有没有消息"无关
+ *     (这正是 0.4.3 修过的那个坑)。
+ *   - 不会留下一个看不见却还在吞点击的空框 —— 命中判定靠 g_BoxFrame 帧号保鲜,
+ *     框不再绘制后会自动失效。
+ */
+static void ClearHistory(void)
+{
+    g_MsgHead   = 0;
+    g_MsgCount  = 0;
+    g_HintHead  = 0;
+    g_HintCount = 0;
+    g_Scroll    = 0;
+    g_Expanded  = 0;
+
+    /* 不受 LogRaw 控制: 这是用户主动操作的痕迹, 一行就是一行 */
+    LogLine("ui: history cleared (Ctrl+L)");
+}
+
 /* 前向声明: PollKeys 要用, 定义在同组函数的后面 */
 static int ScrollStep(void);
 
@@ -674,7 +772,6 @@ static void PollKeys(void)
 {
     static unsigned char s_pUp = 0, s_pDown = 0;
     static unsigned char s_pPgUp = 0, s_pPgDn = 0, s_pHome = 0, s_pEnd = 0;
-    static unsigned char s_logged = 0;
 
     if (!g_Cfg.Enable) return;
 
@@ -716,6 +813,14 @@ static void PollKeys(void)
         s_pCtrlM = now;
     }
 
+    /* Ctrl + L : 清空内存历史与提示区(日志文件不受影响) */
+    {
+        static unsigned char s_pCtrlL = 0;
+        unsigned char now = (unsigned char)(KeyDown(VK_CONTROL) && KeyDown('L'));
+        if (now && !s_pCtrlL) ClearHistory();
+        s_pCtrlL = now;
+    }
+
     if (!g_Expanded) return;
 
     if (KeyPressedEdge(VK_UP,   &s_pUp))   g_Scroll++;
@@ -733,7 +838,6 @@ static void PollKeys(void)
     if (KeyPressedEdge(VK_END,  &s_pEnd))  g_Scroll = 0;       /* 到最新 */
 
     /* 上界夹紧放到绘制时按实际行数做, 因为这里不知道总共有多少行 */
-    if (!s_logged) { s_logged = 1; }
 }
 
 /* ==================== 鼠标交互（阶段 3b）====================
@@ -952,6 +1056,31 @@ static void FillRectTransVt(void* surf, RectangleStruct* pRect, ColorStruct* pCo
     if (fn) fn(surf, NULL, pRect, pColor, opacity);
 }
 
+/* 消息框宽度: MaxWidth>0 时直接用它, 否则取屏幕宽度的一半(上限 520)。
+ * 夹紧规则: 至少 80 像素, 且不超出屏幕右侧。
+ *
+ * 抽成函数是因为【提示区要跟主框一样宽】—— 两处各算一遍迟早会不一致。 */
+static int CalcBoxWidth(int x)
+{
+    RectangleStruct* vb = (RectangleStruct*)ADDR_DSURFACE_VIEWBOUNDS;
+    int screenW = (vb && vb->Width > 200) ? vb->Width : 640;
+    int maxW    = 420;
+
+    if (g_Cfg.MaxWidth > 0)
+        maxW = g_Cfg.MaxWidth;
+    else
+    {
+        maxW = screenW / 2;
+        if (maxW > 520) maxW = 520;
+    }
+
+    if (maxW < 80) maxW = 80;
+    if (maxW > screenW - x - 8) maxW = screenW - x - 8;
+    if (maxW < 80) maxW = 80;
+
+    return maxW;
+}
+
 static void DrawMessages(void)
 {
     void*    surf;
@@ -1007,11 +1136,19 @@ static void DrawMessages(void)
     }
 
     if (!surf) return;
-    if (g_MsgCount <= 0) return;
 
     pFont = *(unsigned char**)ADDR_BITFONT_INSTANCE;
     lineH = pFont ? *(int*)(pFont + FONT_OFF_HEIGHT) : 14;
     if (lineH < 6 || lineH > 64) lineH = 14;
+
+    /* 把字高与框宽记成全局 —— 提示区要用同一套度量, 否则两块框对不齐 */
+    g_LineH    = lineH;
+    g_BoxWidth = CalcBoxWidth(g_Cfg.PosX);
+
+    /* 提示区跟随用的基准, 先按"消息框 0 行高"记。
+     * 真正画完后再更新成实际底边(见函数末尾) —— 这样即使本轮一条消息都没有
+     * (函数提前返回), 提示区也贴在"消息框本该在的位置", 不会乱跳。 */
+    g_BoxBottom = g_Cfg.PosY + g_Cfg.TopGapLines * lineH + 2;
 
     /* 首次绘制时记录字体度量与宽度配置 —— 纯诊断信息, 只在 LogRaw=1 时输出 */
     if (g_Cfg.LogRaw)
@@ -1092,25 +1229,8 @@ static void DrawMessages(void)
      * 并把消息列表下推。消息框也相应下移, 免得盖住输入框。
      * 用"行数"而不是像素, 是因为用户不需要知道字高是多少。 */
     y = g_Cfg.PosY + g_Cfg.TopGapLines * lineH;
-    /* 消息框宽度: MaxWidth>0 时直接用它, 否则取屏幕宽度的一半(上限 520)。
-     * 夹紧规则: 至少 80 像素, 且不超出屏幕右侧。 */
-    maxW = 420;
-    {
-        RectangleStruct* vb = (RectangleStruct*)ADDR_DSURFACE_VIEWBOUNDS;
-        int screenW = (vb && vb->Width > 200) ? vb->Width : 640;
-
-        if (g_Cfg.MaxWidth > 0)
-            maxW = g_Cfg.MaxWidth;
-        else
-        {
-            maxW = screenW / 2;
-            if (maxW > 520) maxW = 520;
-        }
-
-        if (maxW < 80) maxW = 80;
-        if (maxW > screenW - x - 8) maxW = screenW - x - 8;
-        if (maxW < 80) maxW = 80;
-    }
+    /* 宽度与提示区共用同一份计算(见 CalcBoxWidth) */
+    maxW = g_BoxWidth;
     /* 可用文本宽度 = maxW。
      *
      * 底板宽 maxW+6、左内边距 3, 所以文字从 x 起、右边界 x+maxW,
@@ -1240,6 +1360,10 @@ static void DrawMessages(void)
     g_BoxRect  = rect;
     g_BoxFrame = g_Tick;
 
+    /* 提示区跟着【底板的下边缘】走, 两者之间留 HintGap 像素的缝隙。
+     * rect.Height = totalRows*lineH + 4, rect.Y = y-2 ⇒ 下边缘 = y + totalRows*lineH + 2。 */
+    g_BoxBottom = rect.Y + rect.Height;
+
     /* --- ④b 滚动条 ---
      *
      * 贴在底板【右边缘外侧】1 像素处, 而不是画在框内:
@@ -1331,6 +1455,148 @@ static void DrawMessages(void)
 
             fnCS(&ret, tmp, surf, &rect, &loc, scheme, NULL, TEXT_FLAGS);
             drawn++;
+        }
+    }
+}
+
+/* ==================== 操作提示区绘制 ====================
+ *
+ * 贴在主消息框【正下方】, 中间留 HintGap 像素缝隙。
+ * 位置来自 g_BoxBottom —— 那是主框底板的下边缘, DrawMessages 每帧更新,
+ * 所以主框一折叠/展开/消息变多变少, 这一块就跟着上下移动, 间距始终不变。
+ *
+ * 与主框刻意的区别:
+ *   - 不滚动、不展开、没有 KeepLast 兜底 —— 全过期就整块消失
+ *   - 不参与主历史的行号, 互不影响
+ *   - 取色沿用消息自带的 ColorScheme, 看起来与主框是同一套体系
+ *
+ * 行数不够时【保留最新的】: 从最新往回收集, 收不下就停 ——
+ * 宁可少显示几条旧的, 也不能让最新那条看不到。
+ */
+static void DrawHints(void)
+{
+    /* 折行结果放静态区: 24 条 × 8 行 × 8 字节 ≈ 1.5 KB, 不必占栈 */
+    static TextLine lines[MAX_HINTS][MAX_LPP];
+    static int      colors[MAX_HINTS];
+    static int      lineCnt[MAX_HINTS];
+
+    void*   surf;
+    Point2D loc, ret;
+    FancyTextCSFn fnCS;
+    ColorStruct   board;
+    RectangleStruct rect;
+    RectangleStruct* vb;
+    int x, y, lineH, screenH, maxRows;
+    int i, k, r, cnt = 0, totalRows = 0, row;
+    unsigned tt;
+
+    if (!g_Cfg.ShowWindow || !g_Cfg.HintArea) return;
+    if (g_HintCount <= 0) return;
+
+    surf = *(void**)ADDR_DSURFACE_COMPOSITE;
+    if (!surf) return;
+
+    lineH = g_LineH;
+    if (lineH <= 0) return;
+    if (g_BoxWidth < 40) return;   /* 主框还没画过, 宽度未知(ShowWindow=0 时会这样) */
+
+    x = g_Cfg.PosX;
+    y = g_BoxBottom + g_Cfg.HintGap;
+
+    /* 屏幕底部放不下的部分直接不要(宁缺毋滥, 也不做裁剪一半的字) */
+    vb      = (RectangleStruct*)ADDR_DSURFACE_VIEWBOUNDS;
+    screenH = (vb && vb->Height > 100) ? vb->Height : 480;
+    maxRows = (screenH - 4 - y) / lineH;
+    if (maxRows < 1) return;                                  /* 主框太高, 底下没地方了 */
+    if (maxRows > g_Cfg.HintLines) maxRows = g_Cfg.HintLines;
+
+    tt = g_Tick;
+
+    /* --- 从最新往回收集还没消失的提示 --- */
+    for (i = g_HintCount - 1; i >= 0 && cnt < MAX_HINTS; i--)
+    {
+        HintMsg* h = HintAt(i);
+        int n;
+
+        /* 到点就"自然消失" —— 这里不做删除, 只是不显示, 环形缓冲自己会覆盖 */
+        if (h->timeout > 0 && tt - h->frame > (unsigned)h->timeout) continue;
+
+        n = WrapText(h->text, g_BoxWidth, lines[cnt], MAX_LPP);
+        if (n <= 0) continue;
+
+        if (totalRows + n > maxRows) break;   /* 这块放不下了 */
+
+        colors[cnt]  = h->color;
+        lineCnt[cnt] = n;
+        totalRows   += n;
+        cnt++;
+    }
+
+    /* 诊断(LogRaw=1): 提示区状态变化时记一行。
+     * 用来回答"提示区怎么不出现/怎么少了几条" —— 能看出是缓冲里没有(total=0)、
+     * 还是都被超时滤掉了(shown=0)、还是行数不够放不下(rows 顶到 HintLines)。 */
+    if (g_Cfg.LogRaw)
+    {
+        static int s_lastTotal = -1, s_lastShown = -1;
+        if (g_HintCount != s_lastTotal || cnt != s_lastShown)
+        {
+            char b1[16], b2[16], b3[16], b4[16], buf[160];
+            unsigned q = 0;
+            s_lastTotal = g_HintCount; s_lastShown = cnt;
+            UtoA((unsigned)g_HintCount, b1);
+            UtoA((unsigned)cnt,         b2);
+            UtoA((unsigned)totalRows,   b3);
+            UtoA((unsigned)maxRows,     b4);
+            q = AppendCStr(buf, q, "hint: total=", sizeof(buf));
+            q = AppendCStr(buf, q, b1, sizeof(buf));
+            q = AppendCStr(buf, q, " shown=", sizeof(buf));
+            q = AppendCStr(buf, q, b2, sizeof(buf));
+            q = AppendCStr(buf, q, " rows=", sizeof(buf));
+            q = AppendCStr(buf, q, b3, sizeof(buf));
+            q = AppendCStr(buf, q, "/", sizeof(buf));
+            q = AppendCStr(buf, q, b4, sizeof(buf));
+            LogLine(buf);
+        }
+    }
+
+    if (cnt <= 0) return;
+
+    /* --- 底板: 与主框同一套尺寸约定(左右各多 3 像素, 上下各多 2 像素) --- */
+    rect.X      = x - 3;
+    rect.Y      = y - 2;
+    rect.Width  = g_BoxWidth + 6;
+    rect.Height = totalRows * lineH + 4;
+
+    if (g_Cfg.HintOpacity > 0)
+    {
+        board.R = 0; board.G = 0; board.B = 0;
+        FillRectTransVt(surf, &rect, &board, g_Cfg.HintOpacity);
+    }
+
+    fnCS = (FancyTextCSFn)ADDR_FANCY_TEXT_CS;
+
+    /* --- 从最旧的一条开始画, 这样最新的落在最下面(与主框一致) --- */
+    row = 0;
+    for (k = cnt - 1; k >= 0; k--)
+    {
+        void* scheme = SchemePtr(colors[k]);
+
+        for (r = 0; r < lineCnt[k]; r++)
+        {
+            TextLine* ln = &lines[k][r];
+            wchar_t   tmp[MAX_HINT_W];
+            int       t;
+
+            for (t = 0; t < ln->len && t < MAX_HINT_W - 1; t++)
+                tmp[t] = ln->start[t];
+            tmp[t] = 0;
+
+            /* pBounds 传整块底板, loc 传框内偏移 —— 与主框完全相同的用法 */
+            loc.X = 3;
+            loc.Y = row * lineH + 2;
+
+            fnCS(&ret, tmp, surf, &rect, &loc, scheme, NULL, TEXT_FLAGS);
+            row++;
         }
     }
 }
@@ -1481,7 +1747,11 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_DrawCallHook(void* regs)
     }
 
     if (g_Cfg.Enable && g_Cfg.ShowWindow)
+    {
         DrawMessages();
+        /* 必须【在主框之后】—— 提示区的位置依赖 g_BoxBottom, 那是主框刚更新的 */
+        DrawHints();
+    }
 
     return 0;   /* 让原版 Draw 继续 —— 它要画输入框 */
 }
@@ -1622,12 +1892,29 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_AddMessageHook(void* regs
 
     (void)b1; (void)b2; (void)b3; (void)b4; (void)b5; (void)b6;
 
-    /* --- 阶段 2: 存进内存历史 ---
-     * FilterSilent=1 时, 操作提示(silent=1) 不进消息框 —— 快捷键提示频率极高,
-     * 放进来会把真正要看的内容冲掉。它们仍然照常写日志。 */
-    if (!(g_Cfg.FilterSilent && argSP))
+    /* --- 阶段 2: 分流 ---
+     *
+     * 消息按第 7 个参数(silent, 实测可靠性 100%)分成两类:
+     *
+     *   真消息(name/聊天/剧情/系统)  -> 主历史 g_Msgs, 可翻可展开
+     *   操作提示(silent=1: 快捷键/路径点) -> 独立的提示区 g_Hints, 会自己消失
+     *
+     * 操作提示实测一局 20 多条, 混进主历史会把真正要看的内容冲掉; 但它们也
+     * 不是全无用处, 所以给一块独立区域显示, 而不是直接丢掉。
+     *
+     * HintArea=0 时退回旧行为: 由 FilterSilent 决定"丢掉"还是"混进主历史"。 */
+    if (!argSP)
     {
         /* 时间戳用单调帧计数 g_Tick, 不用 CurrentFrame(读档会回退, 见其说明) */
+        MsgPush(argName, argMsg, (int)argColor, retAddr,
+                g_Tick, (int)argTimeout, (int)argSP);
+    }
+    else if (g_Cfg.HintArea)
+    {
+        HintPush(argMsg, (int)argColor, (int)argTimeout);
+    }
+    else if (!g_Cfg.FilterSilent)
+    {
         MsgPush(argName, argMsg, (int)argColor, retAddr,
                 g_Tick, (int)argTimeout, (int)argSP);
     }
