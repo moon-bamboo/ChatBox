@@ -102,7 +102,7 @@ ChatBox 做三件事：
 
    ```
    Recognized DLL: "ChatBox.dll"
-   Handshake: Answers "ChatBox 0.4.4: ..."
+   Handshake: Answers "ChatBox 0.4.5: ..."
    ...
    ```
 
@@ -111,7 +111,7 @@ ChatBox 做三件事：
 
 > ⚠️ **升级时必须同时替换 `ChatBox.dll` 和 `ChatBox.dll.inj`**。
 > 两个文件是一对：`.inj` 决定挂哪几个钩子、挂在哪个地址，只换 DLL 会导致
-> 钩子对不上（0.4.4 的绘制钩点地址与 0.4.3 不同）。
+> 钩子对不上（0.4.4 起绘制钩点地址与旧版不同）。
 
 > **纯原版 gamemd.exe 带有防拷保护**，直接运行会静默退出。若你的环境没有
 > CnCNet 客户端，可能需要先解决这个问题（本项目作者另有一个 `NoCopyProtect`
@@ -126,7 +126,7 @@ ChatBox 做三件事：
 
 | 日志行 | 说明 |
 |---|---|
-| `ChatBox 0.4.4 start` | DLL 加载成功 |
+| `ChatBox 0.4.5 start` | DLL 加载成功 |
 | `hook: frame alive (0x55D360)` | 帧钩子（输入）被执行 —— **热键不灵时先看这行在不在** |
 | `hook: draw alive (0x4F4558)` | 绘制钩子被执行 —— **消息框不显示时先看这行** |
 | `hook: suppress alive (0x5D4A94)` | 原版消息列表已成功被抑制（链表为空时不会有这行，属正常） |
@@ -150,7 +150,7 @@ ChatBox 做三件事：
 | `ExpandLines` | `15` | 展开态显示几行 |
 | `MaxHistory` | `100` | 一次最多回看多少条消息（10~500） |
 | `ScrollStep` | `5` | 翻页/滚轮一次滚几行 |
-| `KeepLast` | `1` | 始终保留的最新消息条数（即使已超时） |
+| `KeepLast` | `1` | 最新的 N 条**永远显示**，不随超时消失（`0`~`50`）；`0`=关闭 |
 | `FilterSilent` | `1` | 操作提示不进消息框 |
 | `MaxWidth` | `0` | 消息框宽度，`0` = 自动（屏幕一半） |
 | `TopGapLines` | `1` | 顶部预留几行空档（给回车输入框让位） |

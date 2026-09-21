@@ -23,7 +23,7 @@
 #include <windows.h>
 #include "offsets.h"
 
-#define CB_VERSION      "0.4.4"
+#define CB_VERSION      "0.4.5"
 #define CB_SECTION      "ChatBox"
 
 #define MAX_PATH_LEN    260
@@ -40,6 +40,11 @@
  * 实际生效值由配置 MaxHistory 决定(默认 100)。 */
 #define MAX_HISTORY_LIMIT 500
 
+/* "一直显示、不随超时消失"的最新消息条数上限(配置 KeepLast)。
+ * 上限取 50 而不是 500: 这个值的用途是"消息全部过期后屏幕上仍留点东西",
+ * 50 条已经远超一屏能放下的量(MaxLines 最多 40 行); 设太大只会挤占屏幕。 */
+#define MAX_KEEP_LAST    50
+
 typedef struct {
     int Enable;      /* ChatBox=1          总开关 */
     int LogRaw;      /* LogRaw=0           1 = 额外记录 nameLen/textLen */
@@ -54,7 +59,7 @@ typedef struct {
     int PosX;           /* PosX=8           窗口左上角 X */
     int PosY;           /* PosY=8           窗口左上角 Y */
     int TopGapLines;    /* TopGapLines=1    顶部预留几行空档(给回车输入框让位) */
-    int KeepLast;       /* KeepLast=1       始终保留的最新消息条数(即使已超时) */
+    int KeepLast;       /* KeepLast=1       最新的 N 条【永远显示】, 不随超时消失(0~50) */
     int MaxHistory;     /* MaxHistory=100   一次最多回看多少条消息 */
     int MaxWidth;       /* MaxWidth=0       消息框最大宽度(像素); 0 = 自动 */
     int ExpandLines;    /* ExpandLines=15   展开态最多显示多少行 */
@@ -376,7 +381,7 @@ static void LoadConfig(void)
     if (g_Cfg.TopGapLines < 0)    g_Cfg.TopGapLines  = 0;
     if (g_Cfg.TopGapLines > 10)   g_Cfg.TopGapLines  = 10;
     if (g_Cfg.KeepLast < 0)       g_Cfg.KeepLast     = 0;
-    if (g_Cfg.KeepLast > 20)      g_Cfg.KeepLast     = 20;
+    if (g_Cfg.KeepLast > MAX_KEEP_LAST) g_Cfg.KeepLast = MAX_KEEP_LAST;
     if (g_Cfg.MaxHistory < 10)    g_Cfg.MaxHistory   = 10;
     if (g_Cfg.MaxHistory > MAX_HISTORY_LIMIT) g_Cfg.MaxHistory = MAX_HISTORY_LIMIT;
     if (g_Cfg.ExpandLines < 2)    g_Cfg.ExpandLines  = 2;
@@ -932,12 +937,12 @@ static void DrawMessages(void)
 
     if (!g_Cfg.ShowWindow) return;
 
-    /* 注: 键盘/鼠标交互【不在这里】—— 它们已移到帧钩子(每帧必调),
-     * 因为本函数所在的钩子只在原版消息链表非空时才执行, 靠不住。
-     * 详见 ChatBox_FrameHook 的注释。 */
+    /* 两处"本该在这里、但已经搬走/删掉"的代码, 留个记号免得被好心加回来:
+     *   - 键盘/鼠标交互 -> 已移到帧钩子 ChatBox_FrameHook(每帧必调)。
+     *     本函数所在的钩子在原版消息链表为空时不会执行, 放这儿会一起失灵。
+     *   - 命中标志的复位   -> 已由 MouseInBox() 按 g_BoxFrame 帧号保鲜取代,
+     *     不再需要每帧手动清零。 */
 
-    /* 注: 不再需要手动清命中标志 —— MouseInBox() 按 g_BoxFrame 的帧号保鲜,
-     * 只要本轮没画到框, 那个帧号自然就"太旧"了。 */
     surf = *(void**)ADDR_DSURFACE_COMPOSITE;
 
     /* 诊断(LogRaw=1): 记录进入绘制时的关键状态, 变化才记一行。
@@ -945,14 +950,13 @@ static void DrawMessages(void)
      * 没有消息(msgs=0)、没有画布(surf=NULL), 还是消息被全部过滤。 */
     if (g_Cfg.LogRaw)
     {
-        static int s_lastMsgs = -1, s_lastSurf = -1, s_lastPick = -1;
+        static int s_lastMsgs = -1, s_lastSurf = -1;
         int curSurf = surf ? 1 : 0;
         if (g_MsgCount != s_lastMsgs || curSurf != s_lastSurf)
         {
             char b1[16], b2[16], b3[16], b4[16], buf[220];
             unsigned q = 0;
             s_lastMsgs = g_MsgCount; s_lastSurf = curSurf;
-            (void)s_lastPick;
             UtoA((unsigned)g_MsgCount, b1);
             UtoA((unsigned)g_Cfg.KeepLast, b2);
             UtoA((unsigned)g_Cfg.MaxHistory, b3);
@@ -1025,15 +1029,27 @@ static void DrawMessages(void)
     {
         ChatMsg* m = MsgAt(i);
 
-        /* 最新的 KeepLast 条【无条件保留】, 即使已经超时。
+        /* 最新的 KeepLast 条【永远显示】, 即使已经超时。
          *
          * 为什么必须这样: 否则所有临时消息过期后 picked 会变成 0,
          * 函数直接 return、什么都不画 —— 看起来就像"消息框消失了,
          * 按 Ctrl+M 也唤不出来"(其实 g_Expanded 已经切换了, 只是没东西可画,
-         * 要等下一条消息到达才显现)。 */
+         * 要等下一条消息到达才显现)。
+         *
+         * 判定写成 "picked >= KeepLast" 而不是"比较序号": 因为我们是从最新
+         * 往旧遍历的, 前 KeepLast 条收完之后 picked 就等于 KeepLast,
+         * 从第 KeepLast+1 条开始才按超时淘汰。
+         *
+         * ⚠️ 这里必须是 continue 而不是 break。
+         *    一开始想当然写了 break(理由: 消息按时间有序, 老的先超时,
+         *    见到超时的就不用再看了)。但 timeout = -1 的消息【永不消失】,
+         *    它可能比后面某条已超时的消息更旧 —— 一旦 break, 这条永久消息
+         *    就被"更新的、已超时的"那条挡住了, 永远显示不出来。
+         *    改成 continue 只是多遍历几条, 代价可忽略(上限 MaxHistory)。
+         *    该边界由 test/test_keep.c 覆盖。 */
         if (picked >= g_Cfg.KeepLast && !g_Expanded && m->timeout >= 0 && m->timeout > 0)
         {
-            if (frame - m->frame > (unsigned)m->timeout) break;   /* 该消失了 */
+            if (frame - m->frame > (unsigned)m->timeout) continue;   /* 跳过这条, 继续看更旧的 */
         }
         g_Picked[picked++] = i;      /* g_Picked[0] 是最新的一条 */
     }
@@ -1302,10 +1318,6 @@ static void DrawMessages(void)
 extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_FrameHook(void* regs)
 {
     (void)regs;
-
-    /* 宿主兜底校验: 只在 gamemd.exe 内工作 */
-    if (!GetModuleHandleA("gamemd.exe")) return 0;
-
     EnsureInit();
 
     /* 活性诊断: 只写一次。这一行能直接回答"帧钩子到底有没有被执行" ——
@@ -1368,13 +1380,6 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_MessageDrawHook(void* reg
 {
     (void)regs;
     EnsureInit();
-
-    /* 活性诊断: 只写一次。注意本钩子在原版消息链表为空时【不会被执行】,
-     * 所以"没有这一行"本身也是有用的信息。 */
-    {
-        static unsigned char s_alive = 0;
-        if (!s_alive) { s_alive = 1; LogLine("hook: suppress alive (0x5D4A94)"); }
-    }
 
     if (g_Cfg.Enable && g_Cfg.ShowWindow)
         return ADDR_AFTER_MSGLIST_DRAW;   /* 只跳过消息列表, 保留输入框 */
