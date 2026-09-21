@@ -23,7 +23,7 @@
 #include <windows.h>
 #include "offsets.h"
 
-#define CB_VERSION      "0.3.8"
+#define CB_VERSION      "0.4.0"
 #define CB_SECTION      "ChatBox"
 
 #define MAX_PATH_LEN    260
@@ -35,6 +35,10 @@
 
 #define DEF_ENABLE      1
 #define DEF_LOG_RAW     0         /* 默认不记 nameLen/textLen(那是阶段1标定用的) */
+
+/* 一次可回看条数的上限 —— 排版用的数组按它分配, 所以必须在 LoadConfig 之前定义。
+ * 实际生效值由配置 MaxHistory 决定(默认 100)。 */
+#define MAX_HISTORY_LIMIT 500
 
 typedef struct {
     int Enable;      /* ChatBox=1          总开关 */
@@ -50,6 +54,8 @@ typedef struct {
     int PosX;           /* PosX=8           窗口左上角 X */
     int PosY;           /* PosY=8           窗口左上角 Y */
     int TopGapLines;    /* TopGapLines=1    顶部预留几行空档(给回车输入框让位) */
+    int KeepLast;       /* KeepLast=1       始终保留的最新消息条数(即使已超时) */
+    int MaxHistory;     /* MaxHistory=100   一次最多回看多少条消息 */
     int MaxWidth;       /* MaxWidth=0       消息框最大宽度(像素); 0 = 自动 */
     int ExpandLines;    /* ExpandLines=15   展开态最多显示多少行 */
     int ScrollStep;     /* ScrollStep=5     翻页/滚轮一次的步长(行) */
@@ -344,6 +350,8 @@ static void LoadConfig(void)
     g_Cfg.PosX         = GetPrivateProfileIntA(CB_SECTION, "PosX",         8,  g_IniPath);
     g_Cfg.PosY         = GetPrivateProfileIntA(CB_SECTION, "PosY",         8,  g_IniPath);
     g_Cfg.TopGapLines  = GetPrivateProfileIntA(CB_SECTION, "TopGapLines",  1,  g_IniPath);
+    g_Cfg.KeepLast     = GetPrivateProfileIntA(CB_SECTION, "KeepLast",     1,  g_IniPath);
+    g_Cfg.MaxHistory   = GetPrivateProfileIntA(CB_SECTION, "MaxHistory",  100, g_IniPath);
     g_Cfg.MaxWidth     = GetPrivateProfileIntA(CB_SECTION, "MaxWidth",     0,  g_IniPath);
     g_Cfg.ExpandLines  = GetPrivateProfileIntA(CB_SECTION, "ExpandLines", 15,  g_IniPath);
     g_Cfg.ScrollStep   = GetPrivateProfileIntA(CB_SECTION, "ScrollStep",  5,   g_IniPath);
@@ -367,6 +375,10 @@ static void LoadConfig(void)
     if (g_Cfg.MaxWidth < 0)       g_Cfg.MaxWidth     = 0;
     if (g_Cfg.TopGapLines < 0)    g_Cfg.TopGapLines  = 0;
     if (g_Cfg.TopGapLines > 10)   g_Cfg.TopGapLines  = 10;
+    if (g_Cfg.KeepLast < 0)       g_Cfg.KeepLast     = 0;
+    if (g_Cfg.KeepLast > 20)      g_Cfg.KeepLast     = 20;
+    if (g_Cfg.MaxHistory < 10)    g_Cfg.MaxHistory   = 10;
+    if (g_Cfg.MaxHistory > MAX_HISTORY_LIMIT) g_Cfg.MaxHistory = MAX_HISTORY_LIMIT;
     if (g_Cfg.ExpandLines < 2)    g_Cfg.ExpandLines  = 2;
     if (g_Cfg.ExpandLines > 200)  g_Cfg.ExpandLines  = 200;
 }
@@ -394,18 +406,22 @@ static void EnsureInit(void)
  *   - 操作提示消息(silent=1)默认根本不进这里, 所以 200 条实际很够用
  */
 
-#define MAX_MSGS    200
+#define MAX_MSGS    500    /* 内存历史容量 —— 必须 >= MAX_HISTORY_LIMIT 才能翻满 */
 #define MAX_TEXT_W  512
 #define MAX_NAME_W  64
 
+/* "名字: 内容" 拼好后的最大长度 */
+#define MAX_DISPLAY_W (MAX_NAME_W + MAX_TEXT_W + 4)
+
 typedef struct {
-    wchar_t  text[MAX_TEXT_W];   /* 消息正文 */
-    wchar_t  name[MAX_NAME_W];   /* 来源(仅玩家聊天非空) */
+    wchar_t  name[MAX_NAME_W];        /* 来源(仅玩家聊天非空) —— 着色判断用 */
+    wchar_t  display[MAX_DISPLAY_W];  /* 拼好的显示文本: "名字: 内容" 或纯正文 */
     int      color;              /* ColorSchemeIdx -> 玩家颜色 */
     unsigned retAddr;            /* 调用者返回地址(分类用) */
     unsigned frame;              /* 收到时的游戏帧号 */
     int      timeout;            /* 超时帧数; -1 = 永不消失 */
     int      silent;             /* 1 = 操作提示 */
+    int      clipped;            /* 1 = 正文过长被截断过 */
 } ChatMsg;
 
 static ChatMsg g_Msgs[MAX_MSGS];
@@ -420,20 +436,48 @@ static ChatMsg* MsgAt(int i)
     return &g_Msgs[idx % MAX_MSGS];
 }
 
-static void CopyW(wchar_t* dst, const wchar_t* src, int cap)
+/* 拷贝宽字符串; 超长则截断并补 "..." , 让"被截断"一眼可见。
+ * 返回 1 表示发生了截断。
+ *
+ * 用 ASCII 的 "..." 而不是 U+2026 "…": 引擎的 BitFont 未必收录那个码位,
+ * 显示成方块反而更糟。 */
+static int CopyW(wchar_t* dst, const wchar_t* src, int cap)
 {
     int i = 0;
-    if (!src || !IsPlausiblePtr(src)) { dst[0] = 0; return; }
+    if (cap <= 0) return 0;
+    if (!src || !IsPlausiblePtr(src)) { dst[0] = 0; return 0; }
+
     while (src[i] && i < cap - 1) { dst[i] = src[i]; i++; }
+
+    if (src[i] && cap >= 4)          /* 源串还有剩余 -> 被截断了 */
+    {
+        if (i > cap - 4) i = cap - 4;
+        dst[i++] = L'.'; dst[i++] = L'.'; dst[i++] = L'.';
+        dst[i] = 0;
+        return 1;
+    }
     dst[i] = 0;
+    return 0;
 }
 
 static void MsgPush(const wchar_t* name, const wchar_t* text, int color,
                     unsigned retAddr, unsigned frame, int timeout, int silent)
 {
     ChatMsg* m = &g_Msgs[g_MsgHead];
-    CopyW(m->text, text, MAX_TEXT_W);
+    int p = 0, q = 0;
+
     CopyW(m->name, name, MAX_NAME_W);
+
+    /* 在这里就拼好显示文本(而不是等到绘制时):
+     * 每条消息只存一份文本, 绘制时无需大缓冲, 历史条数才能放大。 */
+    if (m->name[0])
+    {
+        while (m->name[q] && p < MAX_NAME_W - 2) { m->display[p++] = m->name[q++]; }
+        m->display[p++] = L':';
+        m->display[p++] = L' ';
+    }
+    m->clipped = CopyW(m->display + p, text, MAX_DISPLAY_W - p);
+
     m->color   = color;
     m->retAddr = retAddr;
     m->frame   = frame;
@@ -491,26 +535,21 @@ typedef Point2D* (__cdecl *FancyTextCSFn)(
  * 硬换行(文本里自带的 \n)会优先断开 —— 与原版"带换行的消息按原样换行"一致。
  */
 
-#define MAX_PICKED  100    /* 一次最多参与排版的"消息条数"(展开态要能往回翻) */
-#define MAX_LPP       8    /* 单条消息最多折成几行(超出部分截断) */
+#define MAX_LPP             8    /* 单条消息最多折成几行(超出部分截断) */
 
 typedef struct {
     const wchar_t* start;
     int            len;
 } TextLine;
 
-static TextLine g_LineBuf[MAX_PICKED][MAX_LPP];
-static int      g_LineCnt[MAX_PICKED];
-static int      g_Picked[MAX_PICKED];    /* 本轮要显示的消息下标, [0] = 最新 */
-static int      g_RowBase[MAX_PICKED];   /* 每条消息第一行的行号 */
+static TextLine g_LineBuf[MAX_HISTORY_LIMIT][MAX_LPP];
+static int      g_LineCnt[MAX_HISTORY_LIMIT];
+static int      g_Picked[MAX_HISTORY_LIMIT];   /* 本轮要显示的消息下标, [0] = 最新 */
+static int      g_RowBase[MAX_HISTORY_LIMIT];  /* 每条消息第一行的行号 */
 
-/* 拼 "名字: 内容" 用的缓冲。
- *
- * ⚠️ 必须是【每条消息一份】, 不能共用一个!
- * WrapText 存进 g_LineBuf 的是指向本缓冲的【指针】, 所以如果共用一块,
- * 第二轮拼接就会覆盖第一轮的内容 —— 结果是所有玩家聊天都显示最后一条的文本。
- * (单机测试没有玩家聊天, 所以这个缺陷一直没暴露。) */
-static wchar_t  g_Compose[MAX_PICKED][MAX_NAME_W + MAX_TEXT_W + 4];
+/* 注: 这里曾有一个 g_Compose[MAX_PICKED][...] 拼接缓冲(100 条约 580KB)。
+ * 现在"名字: 内容"的拼接提前到了 MsgPush, 存在 ChatMsg::display 里,
+ * 绘制时直接取用 —— 既少了 580KB, 也让历史条数可以放心放大。 */
 
 /* 引擎折行函数: __fastcall 表达 this(thiscall), 第 2 个参数是占位 EDX */
 typedef int (__fastcall *TextFitFn)(void* font, void* edxUnused,
@@ -908,10 +947,17 @@ static void DrawMessages(void)
      * 折叠态: 消息超时就跳过 —— 效果接近原版"显示一段时间后自动消失"。
      * 展开态: 【忽略超时】, 显示完整历史 —— 否则翻历史时旧消息会自己消失。
      * 注意内存历史本身从不删除, 只是"显示/不显示"的区别。 */
-    for (i = g_MsgCount - 1; i >= 0 && picked < MAX_PICKED; i--)
+    for (i = g_MsgCount - 1; i >= 0 && picked < g_Cfg.MaxHistory; i--)
     {
         ChatMsg* m = MsgAt(i);
-        if (!g_Expanded && m->timeout >= 0 && m->timeout > 0)
+
+        /* 最新的 KeepLast 条【无条件保留】, 即使已经超时。
+         *
+         * 为什么必须这样: 否则所有临时消息过期后 picked 会变成 0,
+         * 函数直接 return、什么都不画 —— 看起来就像"消息框消失了,
+         * 按 Ctrl+M 也唤不出来"(其实 g_Expanded 已经切换了, 只是没东西可画,
+         * 要等下一条消息到达才显现)。 */
+        if (picked >= g_Cfg.KeepLast && !g_Expanded && m->timeout >= 0 && m->timeout > 0)
         {
             if (frame - m->frame > (unsigned)m->timeout) break;   /* 该消失了 */
         }
@@ -957,28 +1003,11 @@ static void DrawMessages(void)
      * 展开态要能往回翻历史, 所以不能像折叠态那样"凑够行数就停"。 */
     for (k = 0; k < picked; k++)
     {
-        ChatMsg*       m = MsgAt(g_Picked[k]);
-        const wchar_t* body;
-        int            cnt;
+        ChatMsg* m = MsgAt(g_Picked[k]);
+        int      cnt;
 
-        if (m->name[0])
-        {
-            /* 玩家聊天: 拼成 "名字: 内容" 再折行(用本条消息专属的缓冲) */
-            wchar_t* comp = g_Compose[k];
-            int p = 0, q = 0;
-            while (m->name[q] && p < MAX_NAME_W + MAX_TEXT_W) { comp[p++] = m->name[q++]; }
-            if (p < MAX_NAME_W + MAX_TEXT_W - 2) { comp[p++] = L':'; comp[p++] = L' '; }
-            q = 0;
-            while (m->text[q] && p < MAX_NAME_W + MAX_TEXT_W - 1) { comp[p++] = m->text[q++]; }
-            comp[p] = 0;
-            body = comp;
-        }
-        else
-        {
-            body = m->text;
-        }
-
-        cnt = WrapText(body, textW, g_LineBuf[k], MAX_LPP);
+        /* 直接折行已经拼好的显示文本 —— 拼接在 MsgPush 里就做完了 */
+        cnt = WrapText(m->display, textW, g_LineBuf[k], MAX_LPP);
         if (cnt <= 0) cnt = 1;
         g_LineCnt[k] = cnt;
         totalAll    += cnt;

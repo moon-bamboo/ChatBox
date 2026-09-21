@@ -9,12 +9,16 @@ echo.
 
 rem ---------------------------------------------------------------
 rem  Locate toolchain
+rem  1) ..\..\NoCopyProtect\tools\w64devkit  (当前布局)
+rem  2) ..\..\NoCopyProtect\toolchain        (旧布局)
+rem  3) .\toolchain                          (本地自带)
 rem ---------------------------------------------------------------
-set "TC=%~dp0..\..\NoCopyProtect\toolchain"
+set "TC=%~dp0..\..\NoCopyProtect\tools\w64devkit"
+if not exist "%TC%\bin\g++.exe" set "TC=%~dp0..\..\NoCopyProtect\toolchain"
 if not exist "%TC%\bin\g++.exe" set "TC=%~dp0toolchain"
 if not exist "%TC%\bin\g++.exe" (
     echo [ERROR] toolchain not found.
-    echo         expected: NoCopyProtect\toolchain\bin\g++.exe
+    echo         expected: NoCopyProtect\tools\w64devkit\bin\g++.exe
     pause
     exit /b 1
 )

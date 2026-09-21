@@ -19,3 +19,6 @@ ChatBox.log
 
 # 编译暂存（build.bat 在 %TEMP% 下工作，一般不会出现在这里）
 *.stackdump
+
+# 压缩包
+*.rar
