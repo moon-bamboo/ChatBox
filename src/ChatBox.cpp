@@ -673,8 +673,9 @@ static void PollKeys(void)
         {
             g_Expanded = !g_Expanded;
             g_Scroll   = 0;                 /* 每次切换都回到最新 */
-            if (g_Cfg.LogRaw)
-                LogLine(g_Expanded ? "ui: expanded (Ctrl+M)" : "ui: collapsed (Ctrl+M)");
+            /* 不受 LogRaw 控制: 这是用户主动操作的痕迹, 一行就是一行,
+             * 不会刷屏 —— 而且"按了没反应"时, 有没有这行是最关键的证据。 */
+            LogLine(g_Expanded ? "ui: expanded (Ctrl+M)" : "ui: collapsed (Ctrl+M)");
         }
         s_pCtrlM = now;
     }
@@ -796,15 +797,13 @@ static void PollMouse(void)
         {
             g_Expanded = !g_Expanded;
             g_Scroll   = 0;
-            if (g_Cfg.LogRaw)
-                LogLine(g_Expanded ? "ui: expanded (click)" : "ui: collapsed (click)");
+            LogLine(g_Expanded ? "ui: expanded (click)" : "ui: collapsed (click)");
         }
         else if (g_Expanded)
         {
             g_Expanded = 0;
             g_Scroll   = 0;
-            if (g_Cfg.LogRaw)
-                LogLine("ui: collapsed (click outside)");
+            LogLine("ui: collapsed (click outside)");
         }
     }
     s_pLMB = now;
@@ -1308,6 +1307,15 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_FrameHook(void* regs)
     if (!GetModuleHandleA("gamemd.exe")) return 0;
 
     EnsureInit();
+
+    /* 活性诊断: 只写一次。这一行能直接回答"帧钩子到底有没有被执行" ——
+     * 排查 0.4.2 那个"消息过期后热键全失灵且日志空白"的问题时,
+     * 最缺的就是这么一条证据。刻意不受 LogRaw 控制(仅一次, 不刷屏)。 */
+    {
+        static unsigned char s_alive = 0;
+        if (!s_alive) { s_alive = 1; LogLine("hook: frame alive (0x55D360)"); }
+    }
+
     if (g_Cfg.Enable)
     {
         PollKeys();
@@ -1339,6 +1347,12 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_DrawCallHook(void* regs)
     (void)regs;
     EnsureInit();
 
+    /* 活性诊断: 只写一次(见 FrameHook 处说明) */
+    {
+        static unsigned char s_alive = 0;
+        if (!s_alive) { s_alive = 1; LogLine("hook: draw alive (0x4F455D)"); }
+    }
+
     if (g_Cfg.Enable && g_Cfg.ShowWindow)
         DrawMessages();
 
@@ -1350,6 +1364,13 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_MessageDrawHook(void* reg
 {
     (void)regs;
     EnsureInit();
+
+    /* 活性诊断: 只写一次。注意本钩子在原版消息链表为空时【不会被执行】,
+     * 所以"没有这一行"本身也是有用的信息。 */
+    {
+        static unsigned char s_alive = 0;
+        if (!s_alive) { s_alive = 1; LogLine("hook: suppress alive (0x5D4A94)"); }
+    }
 
     if (g_Cfg.Enable && g_Cfg.ShowWindow)
         return ADDR_AFTER_MSGLIST_DRAW;   /* 只跳过消息列表, 保留输入框 */
