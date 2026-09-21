@@ -102,17 +102,39 @@ ChatBox 做三件事：
 
    ```
    Recognized DLL: "ChatBox.dll"
+   Handshake: Answers "ChatBox 0.4.4: ..."
    ...
    ```
 
-   与 NoCopyProtect / AutoLoad / AutoKit 共存时钩子总数为 17。
+   本插件自身挂 **7 个**钩子。与 NoCopyProtect(7) + AutoLoad(1) 共存时
+   总数为 `Done (15 hooks added)`；若还有 AutoKit(1) 则为 16。
 
 > ⚠️ **升级时必须同时替换 `ChatBox.dll` 和 `ChatBox.dll.inj`**。
-> 两个文件是一对：`.inj` 决定挂哪几个钩子，只换 DLL 会导致钩子对不上。
+> 两个文件是一对：`.inj` 决定挂哪几个钩子、挂在哪个地址，只换 DLL 会导致
+> 钩子对不上（0.4.4 的绘制钩点地址与 0.4.3 不同）。
 
 > **纯原版 gamemd.exe 带有防拷保护**，直接运行会静默退出。若你的环境没有
 > CnCNet 客户端，可能需要先解决这个问题（本项目作者另有一个 `NoCopyProtect`
 > 插件专门处理）。
+
+---
+
+## 排查：日志里该看到什么
+
+日志按"进程启动时间"分文件，落在游戏目录的 `MsgLog\` 下。
+下面这几行**不受 `LogRaw` 开关控制**，一定会有（都很短，各只写一次）：
+
+| 日志行 | 说明 |
+|---|---|
+| `ChatBox 0.4.4 start` | DLL 加载成功 |
+| `hook: frame alive (0x55D360)` | 帧钩子（输入）被执行 —— **热键不灵时先看这行在不在** |
+| `hook: draw alive (0x4F4558)` | 绘制钩子被执行 —— **消息框不显示时先看这行** |
+| `hook: suppress alive (0x5D4A94)` | 原版消息列表已成功被抑制（链表为空时不会有这行，属正常） |
+| `ui: expanded (Ctrl+M)` | 你按下过 `Ctrl+M` —— **按了没这行就是按键没被收到** |
+
+判断链条很简单：`start` 都没有 → DLL 没加载；
+有 `start` 没 `frame alive` → 钩子地址或 `.inj` 有问题；
+有 `frame alive` 但按 `Ctrl+M` 没 `ui:` 行 → 按键被别的窗口/输入法吃了。
 
 ---
 

@@ -89,9 +89,45 @@ typedef struct { unsigned char R, G, B; } ColorStruct;
 #define ADDR_AFTER_MSGLIST_DRAW     0x005D4A9Bu
 #define HOOK_SIZE_MSGLIST_DRAW      7
 
-/* 原版调用 MessageListClass::Draw 的调用点(备查 —— 不再在此挂钩) */
-#define ADDR_DRAW_CALL_SITE         0x004F455Du
-#define ADDR_AFTER_DRAW_CALL        0x004F4562u
+/* ==================== 画自己的消息框: 0x4F4558 ====================
+ *
+ * 这是"每帧必到"的绘制调用点附近。反汇编:
+ *
+ *   4f4547:  mov  0xa8ef54,%ecx      ; 上面有若干 je/jne, 但【都汇聚到 0x4F4547】
+ *   4f4558:  b9 60 bc a8 00         mov  $0xa8bc60,%ecx   ; ★ 钩这里(5 字节)
+ *   4f455d:  e8 3e 04 0e 00         call 0x5d49a0         ; MessageListClass::Draw
+ *   4f4562:  ...                                            ; ← 原版继续
+ *
+ * 没有任何分支跳过 0x4F4558 → 消息链表为空时也照常到达, 所以画框的时机可靠。
+ * 我们在这里画自己的框, 返回 0 让原版 Draw 照常执行(它负责画【输入框】),
+ * 由 0x5D4A94 的钩子精确抑制它内部画【消息列表】那一段。
+ *
+ * ⚠️⚠️ 为什么不钩紧邻的下一条 0x4F455D —— 这是本项目最隐蔽的一个坑:
+ *
+ *   Syringe 的钩子会把【被覆盖的原指令】抄到别处(trampoline)去执行,
+ *   但它【不做相对地址重定位】。而 0x4F455D 恰恰是一条【相对调用】:
+ *
+ *       e8 3e 04 0e 00   ->   call  $+5+0x000E043E  ==  0x5D49A0
+ *
+ *   抄到 trampoline(0x02890000 附近)后这条指令变成:
+ *
+ *       0x02890021 + 5 + 0x000E043E  ==  0x02970464   ← 一片不可执行内存
+ *
+ *   实测崩溃: EXCEPTION_ACCESS_VIOLATION at 0x02970464, ECX = 0x00A8BC60
+ *   (= MessageListClass::Instance)。铁证: 0x02970464 - 0x000E043E = 0x02890026,
+ *   而 0x02890026 正是崩溃时 ESP 指向的值 —— 也就是这条 call 压进去的返回地址。
+ *
+ *   0.3.7 以前这个钩子返回 0x4F4562【直接跳走】, 原指令根本不执行, 所以从未暴露;
+ *   0.4.3 改成 return 0 让原指令执行, 立刻崩溃。
+ *
+ *   教训: **钩点上不要有相对跳转指令(call rel32 / jmp rel32 / jcc rel32)**。
+ *   检查办法: objdump 看该地址是否 e8 / e9 / 7x 开头。绝对寻址
+ *   (mov $imm32 / mov moffs / 间接 call *reg)都是安全的。
+ *
+ * 而 0x4F4558 是 `b9 imm32` —— 绝对立即数, 抄到哪儿执行都对。
+ * 跳回点是 0x4F455D, 原版那条 call 在【原位置】执行, 偏移天然正确。 */
+#define ADDR_DRAW_CALL_SITE         0x004F4558u
+#define ADDR_AFTER_DRAW_CALL        0x004F455Du   /* 钩点+5: Syringe 执行完原指令后跳回这里 */
 #define ADDR_MESSAGELIST_DRAW       0x005D49A0u
 
 /* 绘制接管点: GScreenClass::NewMessageListDraw (Phobos 同址)

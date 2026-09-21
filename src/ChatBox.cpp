@@ -23,7 +23,7 @@
 #include <windows.h>
 #include "offsets.h"
 
-#define CB_VERSION      "0.4.3"
+#define CB_VERSION      "0.4.4"
 #define CB_SECTION      "ChatBox"
 
 #define MAX_PATH_LEN    260
@@ -1328,10 +1328,11 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_FrameHook(void* regs)
  *
  * 分两个钩子配合, 各管一件事:
  *
- *   0x4F455D  ChatBox_DrawCallHook   —— 原版 `call MessageListClass::Draw` 的调用点。
- *             这里 4F455D 是【无条件】每帧执行的, 所以画框的时机可靠
+ *   0x4F4558  ChatBox_DrawCallHook   —— 每帧必到的绘制调用点【前一条】指令。
+ *             `b9 60 bc a8 00` = mov $0xa8bc60,%ecx  (5 字节, 绝对立即数)
+ *             这里 4F4558 是【无条件】每帧执行的, 所以画框的时机可靠
  *             (不再依赖"消息链表非空")。我们在这里画自己的消息框, 返回 0
- *             让原版 Draw 继续跑 —— 它负责画【输入框】。
+ *             让原指令执行, 原版 Draw 继续跑 —— 它负责画【输入框】。
  *
  *   0x5D4A94  ChatBox_MessageDrawHook —— Draw 内部画【消息列表】的那三条指令。
  *             返回 0x5D4A9B 跳过它, 于是原版消息列表不画(由我们的框替代),
@@ -1339,7 +1340,10 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_FrameHook(void* regs)
  *
  * 之所以不让第一个钩子直接跳过原版 Draw: 那样会连输入框一起跳掉
  * (联机按回车时"从【玩家名】："就不见了)。
- */
+ *
+ * ⚠️ 钩点绝不能选 0x4F455D —— 那是 `call rel32`, Syringe 把原指令抄到
+ *    trampoline 执行时不重定位相对偏移, 会跳到 0x02970464 崩溃(实测)。
+ *    详见 offsets.h 里 ADDR_DRAW_CALL_SITE 上面那段。 */
 
 /* 画自己的消息框 —— 挂在无条件执行的调用点上 */
 extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_DrawCallHook(void* regs)
@@ -1350,7 +1354,7 @@ extern "C" __declspec(dllexport) DWORD __cdecl ChatBox_DrawCallHook(void* regs)
     /* 活性诊断: 只写一次(见 FrameHook 处说明) */
     {
         static unsigned char s_alive = 0;
-        if (!s_alive) { s_alive = 1; LogLine("hook: draw alive (0x4F455D)"); }
+        if (!s_alive) { s_alive = 1; LogLine("hook: draw alive (0x4F4558)"); }
     }
 
     if (g_Cfg.Enable && g_Cfg.ShowWindow)
